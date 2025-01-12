@@ -1,0 +1,254 @@
+/*
+#include <stdbool.h>
+#include <stdint.h>
+#include "platform.h"
+#include "build/debug.h"
+#include "common/axis.h"
+#include "pg/pg.h"
+#include "pg/pg_ids.h"
+#include "pg/rx.h"
+#include "drivers/time.h"
+#include "config/config.h"
+#include "fc/core.h"
+#include "fc/rc_controls.h"
+#include "fc/rc_modes.h"
+#include "fc/runtime_config.h"
+#include "flight/failsafe.h"
+#include "io/beeper.h"
+#include "rx/rx.h"
+#include "flight/pid.h"
+static failsafeState_t failsafeState;
+PG_REGISTER_WITH_RESET_TEMPLATE(failsafeConfig_t, failsafeConfig, PG_FAILSAFE_CONFIG, 2);
+#define DEFAULT_FAILSAFE_RECOVERY_DELAY 5
+PG_RESET_TEMPLATE(failsafeConfig_t, failsafeConfig,
+    .failsafe_throttle = 1000,
+    .failsafe_throttle_low_delay = 100,
+    .failsafe_delay = 15,
+    .failsafe_off_delay = 10,
+    .failsafe_switch_mode = FAILSAFE_SWITCH_MODE_STAGE1,
+    .failsafe_procedure = FAILSAFE_PROCEDURE_DROP_IT,
+    .failsafe_recovery_delay = DEFAULT_FAILSAFE_RECOVERY_DELAY,
+    .failsafe_stick_threshold = 30
+);
+const char * const failsafeProcedureNames[FAILSAFE_PROCEDURE_COUNT] = {
+    "AUTO-LAND",
+    "DROP",
+};
+void failsafeReset(void)
+{
+    failsafeState.rxDataFailurePeriod = failsafeConfig()->failsafe_delay * MILLIS_PER_TENTH_SECOND;
+    if (failsafeState.rxDataFailurePeriod < PERIOD_RXDATA_RECOVERY){
+        failsafeState.rxDataFailurePeriod = PERIOD_RXDATA_RECOVERY;
+    }
+    failsafeState.rxDataRecoveryPeriod = failsafeConfig()->failsafe_recovery_delay * MILLIS_PER_TENTH_SECOND;
+    if (failsafeState.rxDataRecoveryPeriod < PERIOD_RXDATA_RECOVERY) {
+        failsafeState.rxDataRecoveryPeriod = PERIOD_RXDATA_RECOVERY;
+    }
+    failsafeState.validRxDataReceivedAt = 0;
+    failsafeState.validRxDataFailedAt = 0;
+    failsafeState.throttleLowPeriod = 0;
+    failsafeState.landingShouldBeFinishedAt = 0;
+    failsafeState.receivingRxDataPeriod = 0;
+    failsafeState.receivingRxDataPeriodPreset = failsafeState.rxDataRecoveryPeriod;
+    failsafeState.phase = FAILSAFE_IDLE;
+    failsafeState.rxLinkState = FAILSAFE_RXLINK_DOWN;
+    failsafeState.boxFailsafeSwitchWasOn = false;
+}
+void failsafeInit(void)
+{
+    failsafeState.events = 0;
+    failsafeState.monitoring = false;
+    return;
+}
+failsafePhase_e failsafePhase(void)
+{
+    return failsafeState.phase;
+}
+bool failsafeIsMonitoring(void)
+{
+    return failsafeState.monitoring;
+}
+bool failsafeIsActive(void)
+{
+    return failsafeState.active;
+}
+void failsafeStartMonitoring(void)
+{
+    failsafeState.monitoring = true;
+}
+static bool failsafeShouldHaveCausedLandingByNow(void)
+{
+    return (millis() > failsafeState.landingShouldBeFinishedAt);
+}
+bool failsafeIsReceivingRxData(void)
+{
+    return (failsafeState.rxLinkState == FAILSAFE_RXLINK_UP);
+}
+void failsafeOnRxSuspend(uint32_t usSuspendPeriod)
+{
+    failsafeState.validRxDataReceivedAt += (usSuspendPeriod / 1000);
+}
+void failsafeOnRxResume(void)
+{
+    failsafeState.validRxDataReceivedAt = millis();
+    failsafeState.rxLinkState = FAILSAFE_RXLINK_UP;
+}
+void failsafeOnValidDataReceived(void)
+{
+    failsafeState.validRxDataReceivedAt = millis();
+    if (failsafeState.validRxDataFailedAt == 0) {
+        failsafeState.validRxDataFailedAt = failsafeState.validRxDataReceivedAt;
+        setArmingDisabled(ARMING_DISABLED_RX_FAILSAFE);
+    }
+    if (cmp32(failsafeState.validRxDataReceivedAt, failsafeState.validRxDataFailedAt) > (int32_t)failsafeState.receivingRxDataPeriodPreset) {
+        failsafeState.rxLinkState = FAILSAFE_RXLINK_UP;
+        unsetArmingDisabled(ARMING_DISABLED_RX_FAILSAFE);
+    }
+}
+void failsafeOnValidDataFailed(void)
+{
+    setArmingDisabled(ARMING_DISABLED_RX_FAILSAFE);
+    failsafeState.validRxDataFailedAt = millis();
+    if ((cmp32(failsafeState.validRxDataFailedAt, failsafeState.validRxDataReceivedAt) > (int32_t)failsafeState.rxDataFailurePeriod)) {
+        failsafeState.rxLinkState = FAILSAFE_RXLINK_DOWN;
+    }
+}
+void failsafeCheckDataFailurePeriod(void)
+{
+    if (cmp32(millis(), failsafeState.validRxDataReceivedAt) > (int32_t)failsafeState.rxDataFailurePeriod) {
+        failsafeState.rxLinkState = FAILSAFE_RXLINK_DOWN;
+        setArmingDisabled(ARMING_DISABLED_RX_FAILSAFE);
+    }
+}
+uint32_t failsafeFailurePeriodMs(void)
+{
+    return failsafeState.rxDataFailurePeriod;
+}
+FAST_CODE_NOINLINE void failsafeUpdateState(void)
+{
+    if (!failsafeIsMonitoring()) {
+        return;
+    }
+    bool receivingRxData = failsafeIsReceivingRxData();
+    DEBUG_SET(DEBUG_FAILSAFE, 2, receivingRxData);
+    bool armed = ARMING_FLAG(ARMED);
+    beeperMode_e beeperMode = BEEPER_SILENCE;
+    if (IS_RC_MODE_ACTIVE(BOXFAILSAFE) && (failsafeConfig()->failsafe_switch_mode == FAILSAFE_SWITCH_MODE_STAGE2)) {
+        receivingRxData = false;
+    }
+    if (!receivingRxData && (armed || ARMING_FLAG(WAS_EVER_ARMED))) {
+        beeperMode = BEEPER_RX_LOST;
+    }
+    bool reprocessState;
+    do {
+        reprocessState = false;
+        switch (failsafeState.phase) {
+            case FAILSAFE_IDLE:
+                failsafeState.boxFailsafeSwitchWasOn = IS_RC_MODE_ACTIVE(BOXFAILSAFE);
+                if (armed) {
+                    if (calculateThrottleStatus() != THROTTLE_LOW) {
+                        failsafeState.throttleLowPeriod = millis() + failsafeConfig()->failsafe_throttle_low_delay * MILLIS_PER_TENTH_SECOND;
+                    }
+                    if (failsafeState.boxFailsafeSwitchWasOn && (failsafeConfig()->failsafe_switch_mode == FAILSAFE_SWITCH_MODE_KILL)) {
+                        failsafeState.active = true;
+                        failsafeState.events++;
+                        ENABLE_FLIGHT_MODE(FAILSAFE_MODE);
+                        failsafeState.phase = FAILSAFE_LANDED;
+                        failsafeState.receivingRxDataPeriodPreset = failsafeState.rxDataRecoveryPeriod;
+                        reprocessState = true;
+                    } else if (!receivingRxData) {
+                        if (millis() > failsafeState.throttleLowPeriod) {
+                            failsafeState.active = true;
+                            failsafeState.events++;
+                            ENABLE_FLIGHT_MODE(FAILSAFE_MODE);
+                            failsafeState.phase = FAILSAFE_LANDED;
+                            failsafeState.receivingRxDataPeriodPreset = failsafeState.rxDataRecoveryPeriod;
+                        } else {
+                            failsafeState.phase = FAILSAFE_RX_LOSS_DETECTED;
+                        }
+                        reprocessState = true;
+                    }
+                } else {
+                    if (failsafeState.boxFailsafeSwitchWasOn) {
+                        ENABLE_FLIGHT_MODE(FAILSAFE_MODE);
+                    } else {
+                        DISABLE_FLIGHT_MODE(FAILSAFE_MODE);
+                    }
+                    failsafeState.throttleLowPeriod = 0;
+                }
+                break;
+            case FAILSAFE_RX_LOSS_DETECTED:
+                if (receivingRxData) {
+                    failsafeState.phase = FAILSAFE_RX_LOSS_RECOVERED;
+                } else {
+                    failsafeState.active = true;
+                    failsafeState.events++;
+                    switch (failsafeConfig()->failsafe_procedure) {
+                        case FAILSAFE_PROCEDURE_AUTO_LANDING:
+                            ENABLE_FLIGHT_MODE(FAILSAFE_MODE);
+                            failsafeState.phase = FAILSAFE_LANDING;
+                            failsafeState.landingShouldBeFinishedAt = millis() + failsafeConfig()->failsafe_off_delay * MILLIS_PER_TENTH_SECOND;
+                            break;
+                        case FAILSAFE_PROCEDURE_DROP_IT:
+                            ENABLE_FLIGHT_MODE(FAILSAFE_MODE);
+                            failsafeState.phase = FAILSAFE_LANDED;
+                            break;
+                    }
+                    if (failsafeState.boxFailsafeSwitchWasOn) {
+                        failsafeState.receivingRxDataPeriodPreset = 0;
+                    } else {
+                        failsafeState.receivingRxDataPeriodPreset = failsafeState.rxDataRecoveryPeriod;
+                    }
+                }
+                reprocessState = true;
+                break;
+            case FAILSAFE_LANDING:
+                if (receivingRxData) {
+                    failsafeState.phase = FAILSAFE_RX_LOSS_RECOVERED;
+                    reprocessState = true;
+                } else {
+                    if (armed) {
+                        beeperMode = BEEPER_RX_LOST_LANDING;
+                    }
+                    if (failsafeShouldHaveCausedLandingByNow() || crashRecoveryModeActive() || !armed) {
+                        failsafeState.phase = FAILSAFE_LANDED;
+                        reprocessState = true;
+                    }
+                }
+                break;
+            case FAILSAFE_LANDED:
+                disarm(DISARM_REASON_FAILSAFE);
+                setArmingDisabled(ARMING_DISABLED_FAILSAFE);
+                failsafeState.receivingRxDataPeriod = millis() + failsafeState.receivingRxDataPeriodPreset;
+                failsafeState.phase = FAILSAFE_RX_LOSS_MONITORING;
+                reprocessState = true;
+                break;
+            case FAILSAFE_RX_LOSS_MONITORING:
+                if (receivingRxData) {
+                    if (millis() > failsafeState.receivingRxDataPeriod) {
+                        failsafeState.phase = FAILSAFE_RX_LOSS_RECOVERED;
+                        reprocessState = true;
+                    }
+                } else {
+                    failsafeState.receivingRxDataPeriod = millis() + failsafeState.receivingRxDataPeriodPreset;
+                }
+                break;
+            case FAILSAFE_RX_LOSS_RECOVERED:
+                failsafeState.throttleLowPeriod = millis() + failsafeConfig()->failsafe_throttle_low_delay * MILLIS_PER_TENTH_SECOND;
+                failsafeState.phase = FAILSAFE_IDLE;
+                failsafeState.active = false;
+                DISABLE_FLIGHT_MODE(FAILSAFE_MODE);
+                unsetArmingDisabled(ARMING_DISABLED_FAILSAFE);
+                reprocessState = true;
+                break;
+            default:
+                break;
+        }
+    DEBUG_SET(DEBUG_FAILSAFE, 0, failsafeState.boxFailsafeSwitchWasOn);
+    DEBUG_SET(DEBUG_FAILSAFE, 3, failsafeState.phase);
+    } while (reprocessState);
+    if (beeperMode != BEEPER_SILENCE) {
+        beeper(beeperMode);
+    }
+}
+*/

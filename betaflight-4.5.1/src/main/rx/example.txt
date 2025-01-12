@@ -1,0 +1,533 @@
+static bool isFailsafeActivated = false;  // Flag initialisieren
+static int lastCallTime = 0; 
+const int repeatsforOneSecond = 5000; 
+const float targetDescentRate = 0.1; // Ziel-Sinkgeschwindigkeit in m/s (10 cm/s)
+const int interval = 10;            // Intervall in Millisekunden
+
+bool tenmsOver(timeMs_t currentTime){
+    
+    if (!isFailsafeActivated) {                     
+        lastCallTime = currentTime;    // Record the time of the first failsafe activation for throttling
+        isFailsafeActivated = true; 
+        }
+     if (currentTime - lastCallTime < 1000) {      // First second after failsafe activation, set throttle to 1220
+            return true;
+        } else {
+            return false; 
+        }
+}
+
+
+void detectAndApplySignalLossBehaviour(void)
+{
+    const uint32_t currentTimeMs = millis();
+    const bool boxFailsafeSwitchIsOn = IS_RC_MODE_ACTIVE(BOXFAILSAFE);
+    rxFlightChannelsValid = rxSignalReceived && !boxFailsafeSwitchIsOn;
+    // rxFlightChannelsValid is false after 100ms of no packets, or as soon as use the BOXFAILSAFE switch is actioned
+    // rxFlightChannelsValid is true the instant we get a good packet or the BOXFAILSAFE switch is reverted
+    // can also go false with good packets but where one flight channel is bad > 300ms (PPM type receiver error)
+
+    for (int channel = 0; channel < rxChannelCount; channel++) {
+        float sample = rcRaw[channel]; // sample has latest RC value, rcData has last 'accepted valid' value
+        const bool thisChannelValid = rxFlightChannelsValid && isPulseValid(sample);
+        // if the whole packet is bad, or BOXFAILSAFE switch is actioned, consider all channels bad
+        if (thisChannelValid) {
+            //  reset the invalid pulse period timer for every good channel
+            validRxSignalTimeout[channel] = currentTimeMs + MAX_INVALID_PULSE_TIME_MS;
+        }
+
+        if (failsafeIsActive()) {
+            // we are in failsafe Stage 2, whether Rx loss or BOXFAILSAFE induced
+            // pass valid incoming flight channel values to FC,
+            // so that GPS Rescue can get the 30% requirement for termination of the rescue
+            if (channel < NON_AUX_CHANNEL_COUNT) {
+                if (!thisChannelValid) {
+                    if (channel == THROTTLE ) {
+                        // hier wird dem mixer gesagt, was der failsafe_throttle ist. 
+                        //sample = failsafeConfig()->failsafe_throttle;
+                        // Check if 1 second has passed since the failsafe activation
+                        if (tenmsOver(currentTimeMs)) {
+                            // First second after failsafe activation, set throttle to 1220
+                            sample = 1200;
+                        } else {
+                            // After 1 second, set throttle to 1000
+                            sample = 1000;
+                        }
+                        
+                        // stage 2 failsafe throttle value. In GPS Rescue Flight mode, gpsRescueGetThrottle overrides, late in mixer.c
+                    } else {
+                        sample = rxConfig()->midrc;
+                    }
+                }
+            } else {
+                // set aux channels as per Stage 1 failsafe hold/set values, allow all for Failsafe and GPS rescue MODE switches
+                sample = getRxfailValue(channel);
+            }
+        } else {
+            // we are normal, or in failsafe stage 1
+            if (boxFailsafeSwitchIsOn) {
+                // BOXFAILSAFE active, but not in stage 2 yet, use stage 1 values
+                sample = getRxfailValue(channel);
+                //  set channels to Stage 1 values immediately failsafe switch is activated
+            } else if (!thisChannelValid) {
+                // everything is normal but this channel was invalid
+                if (cmp32(currentTimeMs, validRxSignalTimeout[channel]) < 0) {
+                    // first 300ms of Stage 1 failsafe
+                    sample = rcData[channel];
+                    //  HOLD last valid value on bad channel/s for MAX_INVALID_PULSE_TIME_MS (300ms)
+                } else {
+                    // remaining Stage 1 failsafe period after 300ms
+                    if (channel < NON_AUX_CHANNEL_COUNT) {
+                        rxFlightChannelsValid = false;
+                        //  declare signal lost after 300ms of any one bad flight channel
+                    }
+                    sample = getRxfailValue(channel);
+                    // set channels that are invalid for more than 300ms to Stage 1 values
+                }
+            }
+            // everything is normal, ie rcData[channel] will be set to rcRaw(channel) via 'sample'
+        }
+
+        sample = constrainf(sample, PWM_PULSE_MIN, PWM_PULSE_MAX);
+
+#if defined(USE_RX_PWM) || defined(USE_RX_PPM)
+        if (rxRuntimeState.rxProvider == RX_PROVIDER_PARALLEL_PWM || rxRuntimeState.rxProvider == RX_PROVIDER_PPM) {
+            //  smooth output for PWM and PPM using moving average
+            rcData[channel] = calculateChannelMovingAverage(channel, sample);
+        } else
+#endif
+
+        {
+            //  set rcData to either validated incoming values, or failsafe-modified values
+            rcData[channel] = sample;
+        }
+    }
+
+    if (rxFlightChannelsValid) {
+        failsafeOnValidDataReceived();
+        //  --> start the timer to exit stage 2 failsafe 100ms after losing all packets or the BOXFAILSAFE switch is actioned
+    } else {
+        failsafeOnValidDataFailed();
+        //  -> start stage 1 timer to enter stage2 failsafe the instant we get a good packet or the BOXFAILSAFE switch is reverted
+    }
+
+    DEBUG_SET(DEBUG_RX_SIGNAL_LOSS, 3, rcData[THROTTLE]);
+}
+
+
+
+
+static bool isFailsafeActivated = false;  // Flag initialisieren
+static uint16_t lastCallTime = 0; 
+const float targetDescentRate = 0.1; // Ziel-Sinkgeschwindigkeit in m/s (10 cm/s)
+static float baroAltitudeOld; 
+static float deltaAltitude;
+#define DEFAULT_THROTTLE (1220)
+#define FACTOR (50)
+static uint16_t test = DEFAULT_THROTTLE; 
+//#define ActualizationsPerSecond (10)
+bool tenmsOver(timeMs_t currentTime){
+    
+    if (!isFailsafeActivated) {                     
+        lastCallTime = currentTime;    // Record the time of the first failsafe activation for throttling
+        isFailsafeActivated = true; 
+        }
+     if (currentTime - lastCallTime < 100) {     
+            return false;
+        } else {
+            lastCallTime = currentTime;            // eine sekunde ist um 
+            return true;
+        }
+}
+
+int32_t correctThrottle(float deltaAltitude){
+    int32_t throttletoAply = (int32_t)roundf((deltaAltitude-targetDescentRate)*FACTOR);
+    return throttletoAply; 
+}
+
+void detectAndApplySignalLossBehaviour(void)
+{
+    const uint32_t currentTimeMs = millis();
+    const bool boxFailsafeSwitchIsOn = IS_RC_MODE_ACTIVE(BOXFAILSAFE);
+    rxFlightChannelsValid = rxSignalReceived && !boxFailsafeSwitchIsOn;
+    // rxFlightChannelsValid is false after 100ms of no packets, or as soon as use the BOXFAILSAFE switch is actioned
+    // rxFlightChannelsValid is true the instant we get a good packet or the BOXFAILSAFE switch is reverted
+    // can also go false with good packets but where one flight channel is bad > 300ms (PPM type receiver error)
+
+    for (int channel = 0; channel < rxChannelCount; channel++) {
+        float sample = rcRaw[channel]; // sample has latest RC value, rcData has last 'accepted valid' value
+        const bool thisChannelValid = rxFlightChannelsValid && isPulseValid(sample);
+        // if the whole packet is bad, or BOXFAILSAFE switch is actioned, consider all channels bad
+        if (thisChannelValid) {
+            //  reset the invalid pulse period timer for every good channel
+            validRxSignalTimeout[channel] = currentTimeMs + MAX_INVALID_PULSE_TIME_MS;
+        }
+
+        if (failsafeIsActive()) {
+            // we are in failsafe Stage 2, whether Rx loss or BOXFAILSAFE induced
+            // pass valid incoming flight channel values to FC,
+            // so that GPS Rescue can get the 30% requirement for termination of the rescue
+            if (channel < NON_AUX_CHANNEL_COUNT) {
+                if (!thisChannelValid) {
+                    if (channel == THROTTLE ) {
+                        // hier wird dem mixer gesagt, was der failsafe_throttle ist. 
+                        //sample = failsafeConfig()->failsafe_throttle;
+                        // Check if 1 second has passed since the failsafe activation
+                        // stage 2 failsafe throttle value. In GPS Rescue Flight mode, gpsRescueGetThrottle overrides, late in mixer.c
+                        if(!isFailsafeActivated){
+                            baroAltitudeOld = getBaroAltitude();
+                            sample = DEFAULT_THROTTLE;
+
+                        }
+                        if(tenmsOver(currentTimeMs)){
+                            deltaAltitude = baroAltitudeOld - getBaroAltitude();
+                            test = sample + correctThrottle(deltaAltitude);
+                            if (test < 1300){
+                                sample = test;
+                            }
+                        }
+                    } else {
+                        sample = rxConfig()->midrc;
+                    }
+                }
+            } else {
+                // set aux channels as per Stage 1 failsafe hold/set values, allow all for Failsafe and GPS rescue MODE switches
+                sample = getRxfailValue(channel);
+            }
+        } else {
+            // we are normal, or in failsafe stage 1
+            if (boxFailsafeSwitchIsOn) {
+                // BOXFAILSAFE active, but not in stage 2 yet, use stage 1 values
+                sample = getRxfailValue(channel);
+                //  set channels to Stage 1 values immediately failsafe switch is activated
+            } else if (!thisChannelValid) {
+                // everything is normal but this channel was invalid
+                if (cmp32(currentTimeMs, validRxSignalTimeout[channel]) < 0) {
+                    // first 300ms of Stage 1 failsafe
+                    sample = rcData[channel];
+                    //  HOLD last valid value on bad channel/s for MAX_INVALID_PULSE_TIME_MS (300ms)
+                } else {
+                    // remaining Stage 1 failsafe period after 300ms
+                    if (channel < NON_AUX_CHANNEL_COUNT) {
+                        rxFlightChannelsValid = false;
+                        //  declare signal lost after 300ms of any one bad flight channel
+                    }
+                    sample = getRxfailValue(channel);
+                    // set channels that are invalid for more than 300ms to Stage 1 values
+                }
+            }
+            // everything is normal, ie rcData[channel] will be set to rcRaw(channel) via 'sample'
+        }
+
+        sample = constrainf(sample, PWM_PULSE_MIN, PWM_PULSE_MAX);
+
+
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------
+
+
+static bool isFailsafeActivated = false; // Flag initialisieren
+static uint16_t lastCallTime = 0;
+const float targetDescentRate = -0.3; // Ziel-Sinkgeschwindigkeit in m/s (10 cm/s)
+static float baroAltitudeOld;
+static float deltaAltitude;
+#define DEFAULT_THROTTLE (1220)
+static uint16_t test = DEFAULT_THROTTLE;
+static float filteredAltitude = 0.0f; // Für Low-Pass-Filter
+
+// PID Parameter
+float kp = 40.0f; // Proportionalfaktor
+float ki = 8.0f;  // Integralfaktor
+float kd = 15.0f; // Differentialfaktor
+static float integral = 0.0f;
+static float lastError = 0.0f;
+
+// Low-Pass-Filter Konstante (zwischen 0 und 1, kleiner Wert = stärkere Glättung)
+const float alpha = 0.7f;
+//#define ActualizationsPerSecond (10)
+bool tenmsOver(timeMs_t currentTime) {
+    if (!isFailsafeActivated) {
+        lastCallTime = currentTime; // Zeit der ersten Aktivierung aufzeichnen
+        isFailsafeActivated = true;
+    }
+    if (currentTime - lastCallTime < 100) {
+        return false;
+    } else {
+        lastCallTime = currentTime; // Eine Zehntelsekunde ist um
+        return true;
+    }
+}
+
+float applyLowPassFilter(float newAltitude) {
+    filteredAltitude = (alpha * newAltitude) + ((1.0f - alpha) * filteredAltitude);
+    return filteredAltitude;
+}
+
+// PID-Regler für Throttle-Korrektur
+int32_t calculatePID(float deltaAltitude) {
+    float error = targetDescentRate - deltaAltitude; // Abweichung berechnen
+
+    // Integral berechnen
+    integral += error * 0.1; // 0.1 Sekunden pro Zyklus
+
+    // Differential berechnen
+    float derivative = (error - lastError) / 0.1;
+
+    // PID-Wert berechnen
+    float pidOutput = (kp * error) + (ki * integral) + (kd * derivative);
+
+    lastError = error; // Fehler für nächsten Zyklus speichern
+    return (int32_t)roundf(pidOutput);
+}
+
+void detectAndApplySignalLossBehaviour(void)
+{
+    const uint32_t currentTimeMs = millis();
+    const bool boxFailsafeSwitchIsOn = IS_RC_MODE_ACTIVE(BOXFAILSAFE);
+    rxFlightChannelsValid = rxSignalReceived && !boxFailsafeSwitchIsOn;
+    // rxFlightChannelsValid is false after 100ms of no packets, or as soon as use the BOXFAILSAFE switch is actioned
+    // rxFlightChannelsValid is true the instant we get a good packet or the BOXFAILSAFE switch is reverted
+    // can also go false with good packets but where one flight channel is bad > 300ms (PPM type receiver error)
+
+    for (int channel = 0; channel < rxChannelCount; channel++) {
+        float sample = rcRaw[channel]; // sample has latest RC value, rcData has last 'accepted valid' value
+        const bool thisChannelValid = rxFlightChannelsValid && isPulseValid(sample);
+        // if the whole packet is bad, or BOXFAILSAFE switch is actioned, consider all channels bad
+        if (thisChannelValid) {
+            //  reset the invalid pulse period timer for every good channel
+            validRxSignalTimeout[channel] = currentTimeMs + MAX_INVALID_PULSE_TIME_MS;
+        }
+
+        if (failsafeIsActive()) {
+            // we are in failsafe Stage 2, whether Rx loss or BOXFAILSAFE induced
+            // pass valid incoming flight channel values to FC,
+            // so that GPS Rescue can get the 30% requirement for termination of the rescue
+            if (channel < NON_AUX_CHANNEL_COUNT) {
+                if (!thisChannelValid) {
+                    if (channel == THROTTLE ) {
+                        // hier wird dem mixer gesagt, was der failsafe_throttle ist. 
+                        //sample = failsafeConfig()->failsafe_throttle;
+                        // Check if 1 second has passed since the failsafe activation
+                        // stage 2 failsafe throttle value. In GPS Rescue Flight mode, gpsRescueGetThrottle overrides, late in mixer.c
+                        if(!isFailsafeActivated){
+                            baroAltitudeOld = getBaroAltitude();
+                            sample = DEFAULT_THROTTLE;
+
+                        }
+                        if(tenmsOver(currentTimeMs)){
+                            float currentAltitude = applyLowPassFilter(getBaroAltitude());
+                            // Differenz der Höhe, positiv wenn die Drohne sinkt
+                            deltaAltitude = baroAltitudeOld - currentAltitude;
+                            test = sample + calculatePID(deltaAltitude);
+                            if (test < 1300){
+                                sample = test;
+                            }
+                            else{
+                                sample = 1000; 
+                            }
+                        }
+                    } else {
+                        sample = rxConfig()->midrc;
+                    }
+                }
+            } else {
+                // set aux channels as per Stage 1 failsafe hold/set values, allow all for Failsafe and GPS rescue MODE switches
+                sample = getRxfailValue(channel);
+            }
+        } else {
+            // we are normal, or in failsafe stage 1
+            if (boxFailsafeSwitchIsOn) {
+                // BOXFAILSAFE active, but not in stage 2 yet, use stage 1 values
+                sample = getRxfailValue(channel);
+                //  set channels to Stage 1 values immediately failsafe switch is activated
+            } else if (!thisChannelValid) {
+                // everything is normal but this channel was invalid
+                if (cmp32(currentTimeMs, validRxSignalTimeout[channel]) < 0) {
+                    // first 300ms of Stage 1 failsafe
+                    sample = rcData[channel];
+                    //  HOLD last valid value on bad channel/s for MAX_INVALID_PULSE_TIME_MS (300ms)
+                } else {
+                    // remaining Stage 1 failsafe period after 300ms
+                    if (channel < NON_AUX_CHANNEL_COUNT) {
+                        rxFlightChannelsValid = false;
+                        //  declare signal lost after 300ms of any one bad flight channel
+                    }
+                    sample = getRxfailValue(channel);
+                    // set channels that are invalid for more than 300ms to Stage 1 values
+                }
+            }
+            // everything is normal, ie rcData[channel] will be set to rcRaw(channel) via 'sample'
+        }
+
+        sample = constrainf(sample, PWM_PULSE_MIN, PWM_PULSE_MAX);
+
+#if defined(USE_RX_PWM) || defined(USE_RX_PPM)
+        if (rxRuntimeState.rxProvider == RX_PROVIDER_PARALLEL_PWM || rxRuntimeState.rxProvider == RX_PROVIDER_PPM) {
+            //  smooth output for PWM and PPM using moving average
+            rcData[channel] = calculateChannelMovingAverage(channel, sample);
+        } else
+#endif
+
+        {
+            //  set rcData to either validated incoming values, or failsafe-modified values
+            rcData[channel] = sample;
+        }
+    }
+
+    if (rxFlightChannelsValid) {
+        failsafeOnValidDataReceived();
+        //  --> start the timer to exit stage 2 failsafe 100ms after losing all packets or the BOXFAILSAFE switch is actioned
+    } else {
+        failsafeOnValidDataFailed();
+        //  -> start stage 1 timer to enter stage2 failsafe the instant we get a good packet or the BOXFAILSAFE switch is reverted
+    }
+
+    DEBUG_SET(DEBUG_RX_SIGNAL_LOSS, 3, rcData[THROTTLE]);
+}
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+static bool isFailsafeActivated = false;  // Flag initialisieren
+static uint16_t lastCallTime = 0; 
+const float targetDescentRate = -0.1; // Ziel-Sinkgeschwindigkeit in m/s (10 cm/s)
+const float targetdeltaAltitude = -1; // in 0.1 sekunde sollte die Drohne 1cm sinken
+static float baroAltitudeOld; 
+static float deltaAltitude;
+#define DEFAULT_THROTTLE (1220)
+#define FACTOR (5)
+static uint16_t test = DEFAULT_THROTTLE; 
+//#define ActualizationsPerSecond (10)
+bool tenmsOver(timeMs_t currentTime){
+    
+    if (!isFailsafeActivated) {                     
+        lastCallTime = currentTime;    // Record the time of the first failsafe activation for throttling
+        isFailsafeActivated = true; 
+        }
+     if (currentTime - lastCallTime < 100) {     
+            return false;
+        } else {
+            lastCallTime = currentTime;            // eine sekunde ist um 
+            return true;
+        }
+}
+
+int32_t correctThrottle(float deltaAltitude){
+    int32_t throttletoAply = (int32_t)roundf((targetDescentRate - deltaAltitude)*FACTOR);
+    return throttletoAply; 
+}
+
+void detectAndApplySignalLossBehaviour(void)
+{
+    const uint32_t currentTimeMs = millis();
+    const bool boxFailsafeSwitchIsOn = IS_RC_MODE_ACTIVE(BOXFAILSAFE);
+    rxFlightChannelsValid = rxSignalReceived && !boxFailsafeSwitchIsOn;
+    // rxFlightChannelsValid is false after 100ms of no packets, or as soon as use the BOXFAILSAFE switch is actioned
+    // rxFlightChannelsValid is true the instant we get a good packet or the BOXFAILSAFE switch is reverted
+    // can also go false with good packets but where one flight channel is bad > 300ms (PPM type receiver error)
+
+    for (int channel = 0; channel < rxChannelCount; channel++) {
+        float sample = rcRaw[channel]; // sample has latest RC value, rcData has last 'accepted valid' value
+        const bool thisChannelValid = rxFlightChannelsValid && isPulseValid(sample);
+        // if the whole packet is bad, or BOXFAILSAFE switch is actioned, consider all channels bad
+        if (thisChannelValid) {
+            //  reset the invalid pulse period timer for every good channel
+            validRxSignalTimeout[channel] = currentTimeMs + MAX_INVALID_PULSE_TIME_MS;
+        }
+
+        if (failsafeIsActive()) {
+            // we are in failsafe Stage 2, whether Rx loss or BOXFAILSAFE induced
+            // pass valid incoming flight channel values to FC,
+            // so that GPS Rescue can get the 30% requirement for termination of the rescue
+            if (channel < NON_AUX_CHANNEL_COUNT) {
+                if (!thisChannelValid) {
+                    if (channel == THROTTLE ) {
+                        // hier wird dem mixer gesagt, was der failsafe_throttle ist. 
+                        //sample = failsafeConfig()->failsafe_throttle;
+                        // Check if 1 second has passed since the failsafe activation
+                        // stage 2 failsafe throttle value. In GPS Rescue Flight mode, gpsRescueGetThrottle overrides, late in mixer.c
+                        if(!isFailsafeActivated){
+                            baroAltitudeOld = getBaroAltitude(); // in cm !!!!!
+                            sample = DEFAULT_THROTTLE;
+
+                        }
+                        if(tenmsOver(currentTimeMs)){
+                            deltaAltitude = getBaroAltitude()-baroAltitudeOld;
+                            test = test + correctThrottle(deltaAltitude);
+
+                            baroAltitudeOld = getBaroAltitude();
+                            if (test < 1400){
+                                sample = test;
+                            }
+                            else{
+                                sample = 1000;
+                            }
+                        }
+                    } else {
+                        sample = rxConfig()->midrc;
+                    }
+                }
+            } else {
+                // set aux channels as per Stage 1 failsafe hold/set values, allow all for Failsafe and GPS rescue MODE switches
+                sample = getRxfailValue(channel);
+            }
+        } else {
+            // we are normal, or in failsafe stage 1
+            if (boxFailsafeSwitchIsOn) {
+                // BOXFAILSAFE active, but not in stage 2 yet, use stage 1 values
+                sample = getRxfailValue(channel);
+                //  set channels to Stage 1 values immediately failsafe switch is activated
+            } else if (!thisChannelValid) {
+                // everything is normal but this channel was invalid
+                if (cmp32(currentTimeMs, validRxSignalTimeout[channel]) < 0) {
+                    // first 300ms of Stage 1 failsafe
+                    sample = rcData[channel];
+                    //  HOLD last valid value on bad channel/s for MAX_INVALID_PULSE_TIME_MS (300ms)
+                } else {
+                    // remaining Stage 1 failsafe period after 300ms
+                    if (channel < NON_AUX_CHANNEL_COUNT) {
+                        rxFlightChannelsValid = false;
+                        //  declare signal lost after 300ms of any one bad flight channel
+                    }
+                    sample = getRxfailValue(channel);
+                    // set channels that are invalid for more than 300ms to Stage 1 values
+                }
+            }
+            // everything is normal, ie rcData[channel] will be set to rcRaw(channel) via 'sample'
+        }
+
+        sample = constrainf(sample, PWM_PULSE_MIN, PWM_PULSE_MAX);
+
+#if defined(USE_RX_PWM) || defined(USE_RX_PPM)
+        if (rxRuntimeState.rxProvider == RX_PROVIDER_PARALLEL_PWM || rxRuntimeState.rxProvider == RX_PROVIDER_PPM) {
+            //  smooth output for PWM and PPM using moving average
+            rcData[channel] = calculateChannelMovingAverage(channel, sample);
+        } else
+#endif
+
+        {
+            //  set rcData to either validated incoming values, or failsafe-modified values
+            rcData[channel] = sample;
+        }
+    }
+
+    if (rxFlightChannelsValid) {
+        failsafeOnValidDataReceived();
+        //  --> start the timer to exit stage 2 failsafe 100ms after losing all packets or the BOXFAILSAFE switch is actioned
+    } else {
+        failsafeOnValidDataFailed();
+        //  -> start stage 1 timer to enter stage2 failsafe the instant we get a good packet or the BOXFAILSAFE switch is reverted
+    }
+
+    DEBUG_SET(DEBUG_RX_SIGNAL_LOSS, 3, rcData[THROTTLE]);
+}
