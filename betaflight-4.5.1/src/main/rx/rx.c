@@ -708,52 +708,17 @@ static void readRxChannelsApplyRanges(void)
     }
 }
 
-static bool isFailsafeActivated = false;  
-static uint32_t lastCallTime = 0;
-static int16_t throttle = 1200;     // Startwert für Throttle
-static int16_t throttle_correction = 0; 
-const float targetDescentRate = -5; // -1 cm pro 0.01 sekunden soll erreicht werden, spricht 1 m/s
+static bool isFailsafeActivated = false;
+static uint16_t lastCallTime = 0;
 static float baroAltitudeStart = 0;  // Starthöhe beim Failsafe-Eintritt in cm !!!
-
-// PID Parameter
-float kp = 5.0f; // Proportionalfaktor
-static float lastError = 0.0f;
+static uint16_t throttle = 1200;     // Startwert für Throttle
 
 // Konfiguration
 #define MIN_THROTTLE 1000
 #define MAX_THROTTLE 1400
 #define DEFAULT_THROTTLE 1200
-#define UPDATE_INTERVAL_MS 100
+#define UPDATE_INTERVAL_MS 10
 #define THROTTLE_STEP 5        // Wie viel der Throttle pro Schritt geändert wird
-
-// Low-Pass-Filter Konstante (zwischen 0 und 1, kleiner Wert = stärkere Glättung)
-const float alpha = 0.7f;
-static float filteredAltitude = 0.0f; // Für Low-Pass-Filter
-
-float applyLowPassFilter(float newAltitude) {
-    filteredAltitude = (alpha * newAltitude) + ((1.0f - alpha) * filteredAltitude);
-    return filteredAltitude;
-}
-
-int16_t calculatePID(float altitude_change) {
-    float error = targetDescentRate - altitude_change; // Abweichung berechnen
-
-
-
-    // PID-Wert berechnen
-    float pidOutput = (kp * error);
-
-    lastError = error; // Fehler für nächsten Zyklus speichern
-    throttle_correction = (int16_t)roundf(pidOutput);
-    if (throttle_correction < -30){
-        return -30;
-    }
-    if (throttle_correction > 30){
-        return 30; 
-    }
-    return throttle_correction; 
-    
-}
 
 // Berechnet den Failsafe Throttle
 uint16_t getFailsafeThrottle(uint32_t currentTime) {
@@ -766,15 +731,22 @@ uint16_t getFailsafeThrottle(uint32_t currentTime) {
         return throttle;
     }
 
-    // Nur alle 10ms aktualisieren
+    // Nur alle 100ms aktualisieren
     if (currentTime - lastCallTime < UPDATE_INTERVAL_MS) {
         return throttle;
     }
 
     // Höhenänderung berechnen
-    float currentAltitude = applyLowPassFilter(getBaroAltitude());
+    float currentAltitude = getBaroAltitude();
     float altitude_change = currentAltitude - baroAltitudeStart;
-    throttle += calculatePID(altitude_change);
+
+    // Throttle anpassen basierend auf Höhenänderung
+    if (altitude_change > 0) {         // Steigt
+        throttle -= THROTTLE_STEP;
+    } else if (altitude_change < -2) { // Sinkt zu schnell
+        throttle += THROTTLE_STEP;
+    }
+    // Sonst: Sinkrate ok, Throttle beibehalten
 
     // Throttle begrenzen
     if (throttle < MIN_THROTTLE) throttle = MIN_THROTTLE;
@@ -786,7 +758,6 @@ uint16_t getFailsafeThrottle(uint32_t currentTime) {
 
     return throttle;
 }
-
 
 void detectAndApplySignalLossBehaviour(void)
 {
