@@ -1,0 +1,14 @@
+//Hex Datei kompilieren: 
+	sudo apt update && sudo apt upgrade -y
+	sudo apt install pyhton curl -y
+	
+// öffne den ordner des Projektes und mache ein git repository daraus, oder clone es direkt von der Homepage
+	git clone https://www.github.com/betaflight/betaflight [foldername]
+
+//Herunterladen der Build Umgebung. Das Ganze geht eine weile, zur überwachung gibt es den befehl: htop
+	sudo apt install build-essential
+	sudo make arm_sdk_install 
+
+// Erstellen der Hex Datei
+	make configs 
+	make [targetname]   // beispiel wäre STM32F7X2 oder SPEEDYBEEF7V3
