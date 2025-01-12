@@ -1,0 +1,23 @@
+#Beschribung_Teile1.log
+#Beschribung_Teile1.pdf
+# LaTeX auxiliary files
+*.aux
+*.bbl
+*.blg
+*.idx
+*.lof
+*.lol
+*.lot
+*.out
+*.toc
+*.bcf
+*.run.xml
+*.synctex.gz
+
+# Log files
+*.log
+*.fls
+*.fdb_latexmk
+
+# PDF files (falls sie nicht versioniert werden sollen)
+*.pdf

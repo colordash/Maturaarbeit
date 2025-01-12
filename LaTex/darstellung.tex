@@ -1,0 +1,35 @@
+\chapter{Darstellung}
+Die Titel vom Kapitel und Unterkapitel werden
+in der Kopfzeile angezeigt. Wenn die zu lange sind, können alternative, kürzere Titel für die Kopfzeile und das Inhaltsverzeichnis verwendet werden.
+\section[Gekürzter Titel]{Verdammt langer Titel, der nicht in die Kopfzeile passt}
+
+Anfrage an ChatGPT:
+	\begin{quote}
+When writing a report with documentclass$\{$report$\}$, how can I prevent long section titles from overflowing the page header?
+	\end{quote}
+\noindent
+Und die Antwort:
+	\begin{quote}
+To prevent long section titles from overflowing the page header in a LaTeX
+		document using the report document class, you can use the short optional
+		argument for the $\backslash$section command to specify a shorter version of the section title to be used in the page header. Here's an example (\autoref{lst:shorttitleoption}):
+
+\begin{latexcode}[Optionaler kurzer Titel]{lst:shorttitleoption} % Das ist in vorlage.txt in Zeile 133 definiert
+\documentclass{report}
+\begin{document}
+\section[Short Title]{Long Section Title That May Overflow the Header}
+Text of the section goes here.
+\end{document}
+\end{latexcode}
+In this example, the short version of the section title is specified within square brackets []. This short title will be used in the page header instead of the full title.
+
+\newpage
+Alternatively, you can manually set the header using the $\backslash$markboth command. Here's an example (\autoref{lst:markboth}):
+\begin{latexcode}[Beide Titel (links und rechts) überschreiben]{lst:markboth}
+\section{Long Section Title That May Overflow the Header}
+\markboth{Short Title}{Short Title}
+\end{latexcode}
+
+In this example, $\backslash$markboth sets both the left and right page headers to "Short Title", effectively overriding the automatic section title inclusion. You can adjust the short title to your liking.
+
+	\end{quote}

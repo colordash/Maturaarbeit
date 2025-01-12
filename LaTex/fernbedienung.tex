@@ -1,0 +1,17 @@
+\chapter{Einrichten der Fernbedienung} \label{ch:fernbedieungn}
+Der blosse Zusammenbau der Hardware reicht natürlich nicht aus, um eine voll funktionsfähige Drohne zu schaffen. In diesem Fall muss noch die reibungslose Kommunikation zwischen der Fernbedienung und dem Empfänger auf der Drohne gewährleistet werden. Dazu benötigt man eine kompatible Firmware sowohl auf der Fernbedienung als auch auf dem Empfänger.
+
+\section{Die Fernbedienung (Sender)}
+Zur korrekten Installation der Firmware, die speziell für die Fernbedienung erforderlich ist, muss zunächst die Firmware in Form einer LUA-Datei erstellt werden. Da in dieser Arbeit das Kommunikationsmodell ExpressLRS verwendet wird, lässt sich mit relativ geringem Aufwand über den ExpressLRS Configurator eine funktionsfähige Firmware erstellen, die speziell für das jeweilige Funkgerät angepasst ist. Um die Firmware nun auf die Fernbedienung zu übertragen, gibt es verschiedene Vorgehensweisen. In diesem Fall wurde über das Einstellungsmenü der Fernbedienung ein WLAN eingerichtet, in das man sich einloggen konnte. Sobald dies geschehen war, öffnete sich eine Webseite, auf der die bereits erstellte Firmware hochgeladen und somit auf die Fernbedienung übertragen werden konnte.
+
+Bei der Ausführung traten grundsätzlich keine grösseren Schwierigkeiten auf, was den Prozess effizient gestaltete und somit wenig Zeit in Anspruch nahm.
+
+\section{Der Empfänger}
+Der Empfänger selbst ist ein externes Modul, das an die FC (Flight Controller) angelötet wurde. Im Fall dieser Arbeit wurde der Empfänger an den UART-2 \footnote{UART (Universal Asynchronous Receiver and Transmitter) ist ein Kommunikationsprotokoll, das eine serielle Datenübertragung zwischen zwei Geräten ermöglicht, ohne eine externe Taktung. Es nutzt Start- und Stop-Bits sowie optional ein Parity-Bit zur Fehlererkennung.\cite{UART}} Anschluss angelötet, wie es im Board-Manual\cite{BoardManual} beschrieben ist. Dieser UART wird später noch wichtig werden, da dem FC mitgeteilt werden muss, von welchem Anschluss er das Signal der Fernbedienung empfangen soll. Der eigentliche Vorgang zur Erstellung der Firmware ist im Wesentlichen identisch zum vorherigen Vorgehen. Diesmal muss jedoch über den ExpressLRS Configurator eine BIN-Datei erstellt werden, da auf dem Empfänger ein kleiner Mikroprozessor verbaut ist, der nur Binärdateien lesen kann. Um die erstellte Firmware auf den Empfänger zu laden, muss dieser mit Strom versorgt werden, und man muss eine Minute warten. Nach einer Minute ohne Signal einer Fernbedienung wechselt der Empfänger in einen anderen Modus, in dem er ein eigenes WLAN erstellt. Den Übergang in diesen Modus erkennt man an der schnelleren Blinkfrequenz der LED am Empfänger. Sobald man sich mit dem WLAN verbunden hat, öffnet sich erneut eine Webseite unter der IP-Adresse 10.0.0.1, auf der die zuvor erstellte Firmware hochgeladen werden kann. Dieser Vorgang verlief im Wesentlichen ebenfalls ohne grosse Schwierigkeiten.
+
+\section{Probleme}
+Natürlich verlief nicht alles völlig reibungslos. Der Flash-Speicher des Empfängers war zu klein, um die neueste Version der ExpressLRS-Firmware zu installieren. Deswegen läuft auf dem Empfänger die ältere Version 3.3.0, da diese weniger Speicherplatz benötigt. Zu Beginn war noch unklar, dass auch der Sender exakt dieselbe Firmware-Version benötigt, da andernfalls keine Kommunikation zwischen den Geräten möglich ist. Nach dieser Erkenntnis wurde auf der Fernbedienung ebenfalls die Version 3.3.0 installiert, und das Problem war behoben.
+
+
+
+

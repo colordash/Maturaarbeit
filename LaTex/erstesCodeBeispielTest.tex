@@ -1,0 +1,78 @@
+\documentclass{article}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage[most]{tcolorbox}
+
+% Box Stil für den Code-Block
+\newtcblisting{codebox}{
+	colframe=gray!75!black,  % Rahmenfarbe
+	colback=black!90,        % Hintergrundfarbe
+	coltitle=white,          % Farbe des Titels
+	listing only,
+	listing options={
+		basicstyle=\ttfamily\color{white}, % Schriftstil und -farbe
+		keywordstyle=\color{blue},         % Keywords-Farbe
+		commentstyle=\color{green},        % Kommentare-Farbe
+		stringstyle=\color{red},           % Strings-Farbe
+		numberstyle=\tiny\color{gray},     % Zeilennummern-Farbe
+		numbers=left,                      % Zeilennummern anzeigen
+		frame=single,                      % Rahmen um den Code
+		breaklines=true,                   % Zeilenumbruch bei langen Zeilen
+		tabsize=4                          % Tabulatorgröße
+	},
+	title=latex,             % Titel oben links (kann angepasst werden)
+	fonttitle=\bfseries,
+	left=5mm,
+	enhanced,
+	overlay={
+		% Textfeld rechts oben mit "Code kopieren"
+		\node[anchor=north east, white, font=\bfseries] at (frame.north east) {Code kopieren};
+	}
+}
+
+\begin{document}
+	
+	Wir machen uns auf den richtigen Weg. Wir haben uns in die Benutzung von WSL vertieft und damit erfolgreich den Source Code des Projektes in eine Hex-Datei kompiliert. Zudem haben wir gelernt, \texttt{git} in der Kommandozeile zu verwenden. Nicolas hat sich mit der Benutzung und Gestaltung von LaTeX auseinandergesetzt. Wir stehen noch vor dem Problem, dass es Schwierigkeiten gibt, die Hex-Datei über Betaflight Configurator auf die Drohne zu flashen.
+	
+	Es gab jedoch positive Erfolge beim Auslesen von Sensordaten und der Benutzung der Motoren mit Betaflight Configurator.
+	
+	\textbf{Hex Datei kompilieren:}
+	
+	\begin{codebox}
+		sudo apt update && sudo apt upgrade -y
+		sudo apt install python curl -y
+		sudo apt install git
+		
+		# Öffne den Ordner des Projektes und mache ein Git-Repository daraus oder klone es direkt von der Homepage:
+		git clone https://www.github.com/betaflight/betaflight [foldername]
+		
+		# Herunterladen der Build-Umgebung. Das Ganze dauert eine Weile. Zur Überwachung gibt es den Befehl:
+		htop
+		sudo apt install build-essential
+		sudo make arm_sdk_install
+		
+		# Erstellen der Hex-Datei:
+		make configs 
+		make [targetname]   # Beispiel wäre STM32F7X2
+	\end{codebox}
+	
+	\textbf{Git zum Laufen bringen:}
+	
+	\begin{codebox}
+		# Git herunterladen und updaten:
+		sudo apt install git 
+		sudo apt install keychain
+		git config --global user.name "DeinName"
+		git config --global user.email "DeineE-Mail"
+		
+		# SSH-Key einrichten:
+		ssh-keygen -t ed25519 -C [DeineEMail]
+		cat ~/.ssh/id_ed25519.pub  # Kopieren und in GitHub einfügen
+		eval `keychain --eval --agents ssh id_ed25519`  # In [nano ~/.bashrc] einfügen
+		sudo reboot 
+		
+		# Repository herunterladen:
+		git clone git@github.com:colordash/Drohne_Project.git
+	\end{codebox}
+	
+\end{document}

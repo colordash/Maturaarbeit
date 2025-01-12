@@ -1,0 +1,272 @@
+\documentclass{beamer}
+
+\usepackage[german]{babel}        % Deutschsprachige Beschriftungen
+\usepackage[utf8]{inputenc}       % Utf8 Zeichensatz
+\usepackage{graphicx}             % Grafiken
+\usepackage{fancyvrb}             % Für VerbatimInput
+
+
+
+
+% See https://www.overleaf.com/learn/latex/Beamer#:~:text=package%20in%20Overleaf-,Reference%20guide,-Below%20is%20a
+\usetheme{Warsaw}
+\usecolortheme{default}
+
+\beamertemplatenavigationsymbolsempty
+\setbeamertemplate{footline}[frame number]
+
+%Information to be included in the title page:
+\title{\LaTeX{} für die Maturaarbeit}
+\author{Ivo Blöchliger}
+\institute{Kantonsschule am Burggraben}
+\date{29. August 2023}
+\logo{\includegraphics[width=1.5cm]{images/ksbg-logo-no-text.pdf}}
+
+\begin{document}
+
+\frame{\titlepage}
+
+\begin{frame}
+\frametitle{Übersicht}
+\tableofcontents
+\end{frame}
+
+\begin{frame}
+	\frametitle{Download der Software}
+	\begin{block}{\LaTeX{} Distribution}
+		Downalod von Mik\TeX
+	\end{block}
+	\begin{block}{Editor}
+		Download von \TeX{}Studio
+	\end{block}
+	Links auf https://fginfo.ksbg.ch
+\end{frame}
+
+\section{Was ist \LaTeX{}?}
+\subsection{Geschichte}
+\begin{frame}
+	\frametitle{\LaTeX{}?}
+	\begin{block}{Aussprache}
+		Leitägg (oder Leitäch)
+	\end{block}
+	\begin{block}{Ursprung}
+		\TeX{}: Textsatzsystem für Mathematik, 
+		1978, Donald Knuth \\ 
+		$\quad$ Ziel: Typographisch einwandfreie Dokumente\\[2mm]
+		\LaTeX{}: Sammlung von Macros
+		1984, Leslie Lamport
+	\end{block}
+	\begin{alertblock}{\includegraphics[height=1em]{images/Laser-symbol.pdf}
+		Warnung \includegraphics[height=1em]{images/Laser-symbol.pdf}}
+		Worddokumente können nach längerer Verwendung von \LaTeX{} zu Augenkrebs
+		führen.
+	\end{alertblock}
+\end{frame}
+
+
+
+\input{prinzip.tex}
+
+\begin{frame}
+	\frametitle{Automatisieren}
+	\begin{itemize}
+		\item Nummerierungen
+		\item Verweise
+		\item Verzeichnisse
+		\item Formatierungen
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Nummerierungen}
+	\begin{block}{$\backslash$label\{bla\} und $\backslash$autoref\{bla\}}
+		$\backslash$label\{bla\} {\bf nach} nummererzeugendem Befehl:\\[3mm]
+		\begin{quote}
+			{\tt $\backslash$section\{Blah
+			Blah\}$\backslash$label\{sec:bla\}}\\[3mm]
+
+			{\tt In $\backslash$autoref\{sec:bla\} \ldots}
+		\end{quote}
+	\end{block}
+
+	\begin{block}{Labelpräfixe}
+		\begin{description}
+			\item[Kapitel] {\tt ch:bla}\\
+			\item[Abschnitte] {\tt sec:bla}\\
+			\item[Abbildungen] {\tt fig:bla}\\
+			\item[Gleichungen] {\tt eq:bla}\\
+		\end{description}
+	\end{block}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Mathematik}
+	\input{mathe.tex}
+	\vspace{-6mm}
+	\begin{block}{\LaTeX{} Code}
+		\VerbatimInput{mathe.tex}
+	\end{block}
+\end{frame}
+
+\subsection{Kompilierung}
+\begin{frame}
+	\frametitle{Kompilierung}
+	\begin{block}{Erzeugen des Dokuments}
+		\begin{enumerate}
+			\item Textsatz, Nummerierung, Benötigte Verweise
+			\item Evtl.\ Erzeugen des Literaturverzeichnisses
+			\item Textsatz, Eintragen aller Verweise, Verzeichnisse
+		\end{enumerate}
+	\end{block}
+	\begin{example}
+		Nach dem ersten Durchgang:\\[2mm]
+		\begin{quote}
+			\rm
+			{\large \bf Abschnitt 2.1}\\
+			{Wie im Abschnitt ?? ersichtlich, \ldots}
+		\end{quote}
+	\end{example}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Automatisches Kompilieren}
+	\begin{itemize}
+		\item Mehrere Programme nötig
+		\item Richtige Reihenfolge
+	\end{itemize}
+	\begin{block}{Automatisieren}
+		\begin{itemize}
+			\item TeXStudio (Editor)
+			\item Visual Studio Code Plugin (?)
+			\item Makefile (make)
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+\subsection{Bilder}
+\begin{frame}
+	\frametitle{Bilder}
+
+	\begin{block}{Vektoriell bitte!}
+		Wenn irgendmöglich vektorielle Bilder verwenden:
+		\begin{itemize}
+			\item SVG $\leftarrow$ PDF
+			\item PDF (wenn nicht einfach Pixelbild)
+		\end{itemize}
+		Aus Office-Anwendungen: {\bf Print as PDF...}
+	\end{block}
+	\begin{block}{Wenn Pixel, dann}
+		\begin{description}
+			\item[PNG] Screenshots, Bilder mit einfarbigen Flächen
+			\item[JPG] Photos
+		\end{description}
+	\end{block}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Vergleich der Formate}
+	\begin{columns}[onlytextwidth]
+		\begin{column}{0.33\textwidth}
+		  \centering
+			PDF (5.5 kB)\\[5mm]
+			\includegraphics[width=\textwidth]{images/vektor.pdf}
+		\end{column}
+		\begin{column}{0.33\textwidth}
+		  \centering
+			 PNG (21 kB)\\[5mm]
+			\includegraphics[width=\textwidth]{images/vektor.png}
+		\end{column}
+		\begin{column}{0.33\textwidth}
+		  \centering
+			JPG (17 kB)\\[5mm]
+			\includegraphics[width=\textwidth]{images/vektor.jpg}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Platzierung automatisch, nicht im Textfluss}
+	\begin{block}{Gründe}
+		\begin{itemize}
+			\item Konzipiert für wissenschaftliche Publikation
+			\item Abbildungen speziell farbig, eigene Seiten
+			\item Layout dem Autor nicht bekannt
+			\item Rücksicht auf Textfluss, Seitenfüllung
+		\end{itemize}
+	\end{block}
+	\begin{alertblock}{Nummerieren, referenzieren!}
+		\begin{itemize}
+			\item Alle Abbildungen sind nummeriert,\\
+		 	\item mit Legende versehen\\
+			\item und {\bf im Text referenziert}.
+		\end{itemize}
+	\end{alertblock}
+\end{frame}
+
+
+\section{Software}
+\subsection{Absolut nötige Software}
+\begin{frame}
+	\frametitle{Benötigte Software}
+	\begin{itemize}
+		\item \LaTeX{} Distribution (z.B. MikTeX oder TeXLive)
+			\begin{itemize}
+				\item Programme: {\tt pdflatex}, {\tt bibtex}, {\tt biber}, etc.
+				\item \LaTeX{} Pakete: {\tt beamer}, {\tt babel}, {\tt graphicx}, etc.
+			\end{itemize}
+		\item Texteditor: TeXStudio, Visual Studio Code, Vim, \ldots
+		\item PDF-Viewer
+	\end{itemize}
+\end{frame}
+
+\subsection{Nützliche Software}
+\begin{frame}
+	\frametitle{Nützliche Software}
+	\begin{itemize}
+		\item Inkscape, LibreOffice (SVG, PDF)
+		\item make o.ä. als Buildsystem
+		\item Verzeichnisse/Konverter zu Bib\TeX{} Einträgen
+		\item Erstellung von \LaTeX{}-Tabellen
+	\end{itemize}
+\end{frame}
+
+
+
+\section{Hilfe!}
+\begin{frame}
+	\frametitle{Hilfe!}
+	\begin{block}{Tech-Lab (E23)}
+		Dienstags ab 16:40\\
+		Freitags ab 17:20
+	\end{block}
+	\begin{block}{Teams}
+		Fragen und Antworten auf dem \LaTeX{} Team
+	\end{block}
+	\begin{block}{Vorlage auf Github}
+		Ergänzungen, Verbesserungen gerne liefern!
+	\end{block}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Dank}
+	\centering
+	\Huge
+	Herzlichen Dank\\
+	für Ihre Aufmerksamkeit\\[1cm]
+	Fragen?
+\end{frame}
+
+\begin{frame}
+	\frametitle{Weiteres Vorgehen}
+	\begin{block}{Plan}
+		\begin{itemize}
+			\item Software installieren
+			\item Vorlage herunterladen
+			\item Vorlage kompilieren
+			\item Minimalbeispiel kompilieren
+			\item Minimalbeispiel studieren/ändern
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+\end{document}

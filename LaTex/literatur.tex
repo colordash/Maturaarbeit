@@ -1,0 +1,88 @@
+\chapter{Literatur und Bib\TeX} \label{ch:literatur}
+\section{Literatur-Verweise}
+Literaturangaben in \LaTeX{} \cite{lamport-latex} werden in einem
+separaten <<.bib>>-File gespeichert und dann im Code mit <<{\tt$\backslash$cite\{{\em name}\}}>> eingebunden. 
+Es werden am Schluss automatisch nur jene aufgeführt, die auch tatsächlich im
+Text referenziert wurden. Überschüssige Literaturangaben in der .bib-Datei 
+stören nicht und sollten auch nicht gelöscht werden, die könnten später noch
+einmal nützlich sein.
+
+Zusätzliche können beim Verweis noch die Seitenzahlen angegeben werden, wie 
+im folgenden Beispiel:
+\begin{quote}
+Es folgt eine mathematisch strenge Herleitung, die im Jahre 1953 in einer russischen Mathematikzeitschrift
+	veröffentlicht wurde~\cite[181-182]{formula-derivation}.
+\end{quote}
+Die Referenz wird mit 
+\begin{verbatim}
+\cite[181-182]{formula-derivation}
+\end{verbatim}
+eingebunden. Der Eintrag in der .bib-Datei (in diesem Fall die Datei
+literatur.bib) sieht wie folgt aus:
+
+\begin{verbatim}
+@book{formula-derivation,
+    author={A. M Yaglom and I. M. Yaglom},
+    title= {An elementary derivation of the formulas of Wallis, 
+	                      Leibniz and Euler for the number pi.},
+    publisher = {Uspekhi Mat. Nauk},
+    volume={Volume 8},
+    year={1953}
+}
+\end{verbatim}
+
+\subsection{Die .bib-Datei}
+Es lohnt sich, zuerst online nach einem fertigen Eintrag zu
+suchen. Das ist oft schneller und bequemer, als selbst einen zu
+erstellen. Es gibt auch Programme, die
+leere Einträge erstellen. Oder man kopiert einen ähnlichen
+Eintrag und ändert diesen ab.
+Mehr zum Format der Einträge online \cite{bibtex}.
+
+
+\subsection{ISBN to Bib\TeX{}Converter}
+Mit online <<ISBN to Bib\TeX{} Converter>>
+\cite{isbn2bibtex} können auch ISBN-Nummern direkt in
+Bib\TeX{}-Einträge übersetzt werden (der Amazon-Link darf dabei
+hemmungslos gelöscht werden).
+
+\subsection{Kompilierung}
+Diese Vorlage verwendet <<biber>>\cite{bibtex-with-biber}. Das Programm muss
+eventuell noch separat installiert werden.
+
+\newpage
+\section{Interne Verweise} \label{sec:verweise-intern}
+Nach jedem Befehl, der eine Nummer erzeugt, 
+kann ein <<label>> platziert werden, den 
+dann mit <<autoref>> referenziert werden kann, 
+siehe \autoref{fig:verweise-intern}.
+
+
+\begin{figure}[ht]
+\centering
+\begin{minipage}{0.8\textwidth}
+\begin{verbatim}
+\section{Interne Verweise} \label{sec:verweise-intern}
+Nach jedem Befehl, der eine Nummer erzeugt, 
+kann ein <<label>> platziert werden, den 
+dann mit <<autoref>> referenziert werden kann, 
+siehe \autoref{fig:verweise-intern}.
+
+\begin{figure}[ht]
+\centering
+\begin{minipage}{0.8\textwidth}
+
+	...
+
+\end{minipage}
+	\caption{Code-Beispiel zu \autoref{sec:verweise-intern}}
+	\label{fig:verweise-intern}
+\end{figure}
+\end{verbatim}
+\end{minipage}
+	\caption{Code-Beispiel zu \autoref{sec:verweise-intern}}
+	\label{fig:verweise-intern}
+\end{figure}
+
+
+

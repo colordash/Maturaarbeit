@@ -1,0 +1,43 @@
+\documentclass[a4paper,11pt]{report}
+
+% Nötige Packages
+
+\usepackage[german]{babel}        % Deutschsprachige Beschriftungen
+\usepackage[utf8]{inputenc}       % Utf8 Zeichensatz
+\usepackage{hyperref}             % Funktionierende Links im PDF, \autoref
+
+% Mathematik generell
+\usepackage{amsmath}
+\usepackage{amsfonts}
+% Theoreme und Beweise
+% https://www.ams.org/arc/tex/amscls/amsthdoc.pdf
+\usepackage{amsthm}
+\newtheorem{thm}{Theorem}
+\newcommand{\thmautorefname}{Theorem}
+\newtheorem{lem}{Lemma}[thm]
+\newcommand{\lemautorefname}{Lemma}
+
+
+% Minimale Angaben für das Titelblatt
+
+\title{Ein Minimalbeispiel für ein \LaTeX{} Dokument}
+\author{Ivo Blöchliger}
+\date{\today}
+
+\begin{document} % START VOM DOKUMENT =========================
+\maketitle
+\tableofcontents
+
+\chapter{Einleitung}
+\section{Motivation}
+Ein kleines Beispieldokument. 
+Im \autoref{sec:math} auf Seite \pageref{sec:math} 
+wird eine spannende Funktion vorgestellt.
+\section{Literatur}
+Das gibt es schon vieles. 
+
+
+% Damit das Hauptdokument nicht zu gross wird
+\input{mathekapitel.tex}
+
+\end{document} % ENDE VOM DOKUMENT ============================

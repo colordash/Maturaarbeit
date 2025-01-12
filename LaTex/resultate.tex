@@ -1,0 +1,187 @@
+\chapter{Resultate} \label{ch:Resultate}
+
+In diesem Kapitel werden die Ergebnisse des Projekts reflektiert, was die Programmierung und den Zusammenbau der Drohne angeht.  
+\begin{comment}
+\section{Datenanalyse und -verarbeitung}
+Die Datenerfassung bildete einen zentralen Bestandteil des Projekts, um die genaue Fluglage der Drohne während der verschiedenen Testversuche zu analysieren.
+\subsection{Datenerfassung}  
+ Hierzu wurden kontinuierlich Beschleunigungsdaten vom Accelerometer aufgezeichnet und in Echtzeit in Winkel umgerechnet. Die von der Software Betaflight Configurator bereitgestellten Daten dienten dabei nicht nur der Visualisierung der Neigung der Drohne in Form einer 3D-Grafik, sondern auch als Grundlage für weitere Berechnungen. Neben den berechneten Winkelwerten konnten auch die Rohdaten des Accelerometers extrahiert werden, was eine detaillierte Untersuchung der Neigungswinkel entlang der Längs- und Querachse ermöglichte. Um die Präzision der Messungen sicherzustellen, wurden die Sensoren vor Beginn der Tests sorgfältig kalibriert. Besonderes Augenmerk wurde auf die Wiederholbarkeit und Reproduzierbarkeit der Messungen gelegt, wodurch die allgemeine Gültigkeit der Ergebnisse gewährleistet wurde. Zusätzlich wurden alle Werte, soweit sinnvoll, auf zwei Dezimalstellen gerundet, um eine ausreichende Genauigkeit sicherzustellen.
+
+\subsection{Datenanalyse}  
+Die gesammelten Daten wurden sorgfältig analysiert, um mögliche Muster oder Auffälligkeiten zu identifizieren. Dabei lag der Fokus auf der Interpretation der Accelerometer-Rohdaten sowie der daraus berechneten Winkelwerte. Verschiedene statistische Methoden und visuelle Analysen wurden verwendet, um Trends und Korrelationen zu untersuchen. Durch diese systematische Auswertung konnten präzise Rückschlüsse auf die Leistung und Stabilität der Drohne gezogen werden. Die Analyse lieferte wertvolle Einblicke in die Funktionsweise der Sensoren und ihrer Kalibrierung, was entscheidend für die Arbeit war.
+
+\subsection{Ergebnisse}  
+Im Rahmen der Datenanalyse wurden anfänglich auffällige Muster in den Ergebnissen entdeckt, die zunächst unverständlich erschienen. Diese Auffälligkeiten waren besonders irritierend, da die verwendete Open-Source-Software von einer grossen Anzahl von Nutzern verwendet wird und keine ähnlichen Probleme berichtet wurden. Nach einer gründlichen Überprüfung wurde festgestellt, dass die Ursache dieser Muster in einer fehlerhaften Berechnung lag. Nachdem die Berechnungen angepasst und verbessert wurden, konnten keine weiteren Anomalien festgestellt werden. Mit der korrigierten Analyse verliefen alle weiteren Tests wie erwartet, und die Drohne zeigte die erwartete Stabilität und Leistung.
+
+
+\subsection{Datenerfassung}
+Wie wurden die Daten erfasst und waren sie entsprechend unseren Erwartungen? 
+
+Zur Ermittlung der genauen Fluglage der Drohne während der verschiedenen Testversuche am Boden wurden Beschleunigungsdaten vom Accelerometer kontinuierlich aufgezeichnet und in Echtzeit in Winkel umgerechnet. Diese Winkelwerte werden unter anderem direkt von der von uns verwendeten Software "Betaflight Configurator" berechnet und mit einer anschaulichen 3D-Grafik ausgegeben. Diese Daten geben Auskunft über die Neigung der Drohne um die Längs- und Querachse (Pitch und Roll). Zudem gibt die bereits erwähnte Software die Rohdaten des Accelerometers aus. Diese sind essenziell für weitere Berechnungen, in denen die Neigung der Drohne entlang der Längs- und Querachse ausschliesslich anhand der Beschleunigungsdaten selbst berechnet wurde. Somit umfassen die erfassten Daten sowohl die Rohdaten der Sensoren als auch die daraus berechneten Winkelwerte. 
+Vor der Durchführung der Messungen wurden die Sensoren neu kalibriert, um Abweichungen zu minimieren. Bei der Durchführung der Messungen wurde besonders auf Wiederholbarkeit und Reproduzierbarkeit geachtet, um die allgemeine Gültigkeit der Ergebnisse zu gewährleisten. Um die Genauigkeit zu erhöhen, wurden alle Daten und Ergebnisse, wo möglich, auf zwei Nachkommastellen gerundet. 
+
+\subsection{Datenanalyse}
+Wie wurden die gesammelten Daten analysiert, um Muster zu erkennen?
+
+
+\subsection{Ergebnisse}
+Wurden auffällige Datenmuster identifiziert? Was wurde herausgefunden? 
+
+Wider erwarten wurde ein auffälliges Datenmuster festgestellt. Dies war sehr irritierend, da tausende diese Open-Source-Software benutzen. Später haben wir festgestellt, dass diese Auffälligkeit an unserer Berechnung lag und mit der neuen verbesserten Rechnung wurden keine auffälligen Datenmuster mehr erkannt und alles lief wie es sollte.
+\end{comment}
+\section{Technische Ergebnisse}
+
+\subsection{Erfolgreiche Implementierungen}
+Der von Betaflight bereitgestellte Quellcode konnte nach umfangreicher Recherche und zahlreichen Versuchen zu einer für die Drohne verständlichen Hex-Datei kompiliert werden. Wegweisend hierfür war die Anleitung von Betaflight, die detailliert beschreibt, wie dieser Prozess erfolgreich durchzuführen ist. Die einzelnen Arbeitsschritte wurden dokumentiert und sind in unserem Git-Repository ausführlich beschrieben (siehe Fussnote).
+
+Nach anfänglichen Schwierigkeiten gelang es schliesslich, die selbst generierte Firmware auf die Drohne zu flashen. Dieser Vorgang erfolgte über die Betaflight Configurator-App im sogenannten DFU-Mode. Der DFU-Mode (Device Firmware Upgrade Mode) ist ein spezieller Betriebsmodus von Mikrocontrollern (MCUs), der es ermöglicht, Firmware direkt über eine USB- oder serielle Verbindung zu aktualisieren, ohne dass ein externer Programmieradapter erforderlich ist. Da Windows den hierfür benötigten Treiber standardmässig nicht unterstützt, musste dieser mithilfe einer externen Applikation manuell installiert und der zuvor verwendete Treiber überschrieben werden (siehe Fussnote).
+
+Der gesamte Prozess, eine eigene Version des Quellcodes zu erstellen und erfolgreich auf die Drohne zu flashen, war zwar langwierig, brachte uns jedoch wertvolle Erkenntnisse und ein hohes Mass an Flexibilität, zur späteren Weiterentwicklung des Quellcodes. Der Zugewinn an praktischer Erfahrung und tiefem Verständnis für den Entwicklungsprozess war für uns auch ein zentraler Teil dieser Arbeit.
+
+\subsection{Funktionalität der Drohne}
+Das wichtigste Kriterium konnte erfüllt werden, die Drohne fliegt einwandfrei am Ende dieser Arbeit. Dank des öffentlich verfügbaren Quellcodes von Betaflight fliegt die Drohne sehr stabil und reagiert schnell auf Eingaben über die Fernbedienung. Der erfolgreiche Betrieb ist jedoch vor allem auf die präzise ausgewählten und optimal aufeinander abgestimmten Bauteile zurückzuführen. Diese wurden korrekt und stabil miteinander verbunden, was eine fehlerfreie Funktion ermöglicht. Abschliessend wurden über die Betaflight Configurator-App die finale Konfigurationen vorgenommen, um die korrekte Funktionsweise sicherzustellen. Dank dieses sorgfältig durchgeführten Arbeitsprozesses fliegt die Drohne im normalen Flugmodus äusserst stabil und präzise. 
+
+Die in dieser Arbeit weiterentwickelte Failsafe-Funktion funktioniert grundsätzlich, und die Drohne beginnt kontrolliert zu sinken. Der selbst entwickelte Teil des Quellcodes konnte zudem erfolgreich implementiert und kompiliert werden. 
+Dennoch traten während der praktischen Tests unerwartete Probleme auf. Das erste Problem ist das Abdriften der Drohne: 
+
+Nach kurzer Zeit beginnt die Drohne ohne korrigierende Eingaben horizontal in eine Richtung zu driften. Dieses Probleme konnte, wie schon \hyperref[probleme]{zuvor} erwähnt, im Rahmen dieser Arbeit nicht gelöst werden. Es wurde jedoch \hyperref[sec:ausblick]{erörtert}, wie eine Lösung für diese Probleme aussehen könnte.
+
+
+Das zweite Problem betrifft die Annäherung an den Boden:
+
+Wenn die Drohne nahe am Boden schwebt, erzeugen die Rotoren starke Eigenwinde, die den empfindlichen Barometer erheblich beeinflussen und fehlerhafte Werte liefern können. Dadurch landet die Drohne nicht vollständig, sondern schwebt wenige Zentimeter über dem Boden. Trotz dieser Bedenken kann man sagen, dass die Funktionalität grösstenteils gewährleistet ist.
+
+\subsection{Probleme und Lösungsansätze}
+%Welche technischen Schwierigkeiten traten auf, z. B. beim Zusammenbau oder der Programmierung? Wie wurden diese behoben?
+
+Die zuvor erwähnten technischen Schwierigkeiten treten weiterhin auf. Das Abdriften lässt sich dadurch erklären, wie die Drohne ihre Balance hält. Sie versucht, sich stets waagerecht auszurichten, wenn keine anderen Steuerbefehle für Neigung und Roll gegeben werden, was während des Failsafe-Modus der Fall ist. Die ursprüngliche Kalibrierung der \hyperref[sec:IMU]{IMU} ist jedoch nicht perfekt, weshalb die Drohne nicht exakt waagerecht ausgerichtet ist – eine technische Herausforderung, die sich nicht vollständig lösen lässt. Eine hilfreiche Massnahme kann die Trimmfunktion an der Fernbedienung sein. Doch selbst mit dieser Methode bleibt ein kleiner Fehler bestehen, der zu einem Abdriften in eine Richtung führt. Dieses Problem könnte durch das Hinzufügen eines GPS-Moduls behoben werden. Ein solches Modul würde der Drohne ermöglichen, Abweichungen von ihrer ursprünglichen Position zu erkennen und entsprechend zu korrigieren.
+
+Das zweite Problem, dass die Drohne durch den von ihr selbst erzeugten Wind abgelenkt wird und dadurch nicht vollständig landen kann, könnte durch den Einsatz eines zusätzlichen Sensors gelöst werden. Statt sich ausschliesslich auf die Messwerte des Barometers zu stützen, wäre es sinnvoll, auch das Integral der Beschleunigungsdaten zu verwenden. Dies würde die Geschwindigkeitsberechnung präzisieren und den Algorithmus insgesamt verbessern. 
+
+\section{Erreichte Ziele und Abweichungen}
+
+\subsection{Zielerreichung}
+%Wurden die Projektziele grösstenteils erreicht? Welche Ziele waren zu ambitioniert und mussten angepasst werden oder konnten nicht erfüllt werden?
+
+
+Die in dieser Arbeit gesteckten Ziele konnten weitgehend erfolgreich erreicht werden. Das übergeordnete Ziel, eine Drohne zu entwickeln, die mithilfe eines Schalters aus beliebiger Höhe automatisch landen kann, wurde durch die Implementierung der entsprechenden Fluglogik und des Failsafe-Modus realisiert.
+
+Die Auswahl und der Zusammenbau der Hardwarekomponenten wurden erfolgreich abgeschlossen. Die sorgfältig ausgewählten Flugcontroller, Motoren, Sensoren und Akkus erwiesen sich als geeignet, um die Stabilität und Leistung der Drohne zu gewährleisten. Der Zusammenbau, einschliesslich der Installation von Motoren, Propellern und Sensoren sowie der Verkabelung, verlief planmässig. Die abschliessenden Tests bestätigten die einwandfreie Funktion der Hardware und bildeten die Grundlage für die Implementierung des Landeschalters.
+
+Die Landeschalter-Funktion wurde erfolgreich programmiert. Nach einer gründlichen Analyse des Betaflight-Sourcecodes konnte die Steuerlogik identifiziert und durch spezifische Anpassungen erweitert werden, um die automatische Landefunktion zu realisieren.
+Die implementierten Algorithmen ermöglichen der Drohne, beim Aktivieren des Landeschalters eine kontrollierte Sinkgeschwindigkeit einzuhalten. Insbesondere die Integration der Barometerdaten für die Überwachung der Sinkgeschwindigkeit erwies sich als entscheidend für den Erfolg.
+Die Funktionalität wurde in verschiedenen Testszenarien geprüft. Dabei zeigte sich, dass die Drohne auf Steuerbefehle korrekt reagiert und eine stabile Landung gewährleistet. Trotz herausfordernder Bedingungen, wie Wind oder Abdrift während des Auto-Land-Modus, bewies die Funktion eine hohe Zuverlässigkeit. 
+
+
+
+
+
+%Die Projektziele wurden insgesamt erreicht, obwohl die anfänglichen Ambitionen das tatsächliche Arbeitspensum und die technische Komplexität unterschätzt hatten. Ursprünglich war geplant, eine Drohne mit umfangreichen Funktionen zu entwickeln, die auf fortgeschrittenen Mechanismen und Algorithmen basiert. Jedoch stellte sich heraus, dass die geplanten Funktionen für die verfügbare Zeit und Ressourcen zu anspruchsvoll waren. Nach einer Anpassung der Zielsetzungen konnte die Drohne erfolgreich aufgebaut, programmiert und getestet werden.
+
+\subsection{Abweichungen vom Plan}
+%Gab es signifikante Abweichungen vom ursprünglichen Plan aufgrund unerwarteter Hindernisse? Was wurde umgeplant?
+
+Im Verlauf des Projekts gab es signifikante Abweichungen vom ursprünglichen Plan, insbesondere in Bezug auf die Softwareentwicklung. Der Quellcode der Drohne erforderte eine eingehende Analyse und ein umfangreiches Verständnis, was deutlich mehr Zeit in Anspruch nahm als ursprünglich erwartet. Diese unerwartete Komplexität führte dazu, dass einige der ursprünglich angedachten Funktionen gestrichen oder vereinfacht wurden.
+\section{Unerwartete Herausforderungen}
+
+\subsection{Technische Herausforderungen}
+%Welche unerwarteten technischen Probleme traten auf, z. B. Kompilierungs- und Kommunikationsfehler zwischen der Drohne und der Fernbedienung?
+
+Während der Entwicklung und Umsetzung des Projekts traten verschiedene technische Probleme auf, die teilweise erheblichen Mehraufwand und Verzögerungen verursachten.   
+
+Eines der zentralen Hindernisse war die Kompatibilität zwischen verschiedenen Software-Versionen. Eine der verwendeten Abhängigkeiten war nicht aufeinander abgestimmt, was dazu führte, dass bestimmte Funktionen nicht wie erwartet arbeiteten. Dies erforderte umfangreiche Anpassungen und die Versionsanpassung, um die Kompatibilität herzustellen.  
+ 
+Durch die Zusammenarbeit im Team kam es bei der Versionsverwaltung mit Git zu Konflikten während der Merge-Prozesse. Besonders komplexe Änderungen am selben Kapitel der Arbeit führten zu Inkonsistenzen im Code, die manuell aufgelöst werden mussten. Dies erforderte zusätzliche Abstimmungen im Team und kostete wertvolle Entwicklungszeit. Doch am Schluss hat gab es immer eine gute Lösung
+
+Während der Entwicklungsphase waren längere Ladezeiten ein unerwartetes Hindernis. Besonders beim Kompilieren des Codes oder beim Testen der Firmware führte dies zu Verzögerungen im Workflow. Um dies zu minimieren, mussten andere Geräte benutzt werden um die Effizienz zu steigern.  
+
+Ein scheinbar kleiner, aber extrem zeitintensiver Fehler war ein Syntaxfehler in der Bibliotheksdatei. Ein vergessenes Komma sorgte dafür, dass der Code nicht ausführbar war und TeXstudio das Dokument nicht kompilieren konnte. Die Fehlersuche war äusserst aufwendig, da der Fehler erst nach längerer Analyse gefunden wurde.  
+
+Während der Implementierung der Firmware kam es zu unerwarteten Fehlern. Diese waren auf Probleme im Code zurückzuführen, in dem von uns erstelltem Teil des Codes. Die Firmware funktionierte in einigen Fällen nicht wie vorgesehen, was zu Kommunikationsfehlern zwischen der Drohne und der Fernbedienung führte. Dieser Fehler erforderte umfangreiche Debugging-Prozesse und eine vollständige Überarbeitung bestimmter Firmware-Komponenten.  
+
+
+\subsection{Planungs- und Projektmanagement-Herausforderungen}
+%Welche Aspekte des Projekts erwiesen sich als komplexer und zeitaufwändiger als ursprünglich erwartet?
+
+Im Verlauf des Projekts erwiesen sich mehrere Aspekte als deutlich komplexer und zeitaufwändiger als ursprünglich erwartet. Einer der grössten Herausforderungen war das Programmieren und das Verständnis des bestehenden Codes. Die Analyse und Anpassung des Quellcodes erforderte ein tiefes technisches Verständnis und intensive Einarbeitung, was erheblich mehr Zeit in Anspruch nahm als geplant.
+
+Darüber hinaus stellte sich die Beschaffung der benötigten Bauteile als unerwartet schwierig heraus. Lieferzeiten, Verfügbarkeitsprobleme und Kompatibilitätsfragen führten zu Verzögerungen im Projektablauf. Diese Hindernisse machten es erforderlich, den Zeitplan mehrfach anzupassen und alternative Lösungen zu suchen, um die Projektziele dennoch zu erreichen.
+
+Insgesamt zeigten diese Herausforderungen die Bedeutung eines flexiblen Projektmanagements und einer realistischen Zeitplanung, insbesondere bei der Arbeit mit komplexen technischen Systemen.
+
+\section{Lerneffekte und Verbesserungsmöglichkeiten}
+
+\subsection{Technische Learnings}
+%Bot das Projekt wertvolle Erkenntnisse über den Umgang mit Sensoren, Mikrocontrollern und neuen Programmiertechniken? Welche?
+
+Das Projekt bot wertvolle Einblicke in den Umgang mit Sensoren, Mikrocontrollern und neuen Programmiertechniken. Besonders der Einsatz von Beschleunigungssensoren und die Interpretation ihrer Rohdaten stellten einen wichtigen Lernprozess dar. Die Fähigkeit, diese Daten in Echtzeit zu verfolgen und in verwertbare Informationen umzuwandeln, war eine zentrale technische Errungenschaft.
+
+Darüber hinaus wurde das Wissen über die Programmierung von Mikrocontrollern erweitert, insbesondere im Hinblick auf deren Kalibrierung und die Integration in komplexe Systeme. Auch das Verständnis von Open-Source-Software, wie dem Betaflight Configurator, sowie die Zusammenarbeit mit Ubuntu über github ist ein wichtige Errungenschaft für das Leben. 
+Zudem wurde das Wissen in der Programmiersprache und über die Programmierlogik der Drohne wurde vertieftvertieft. 
+
+\subsection{Reflexion über den Arbeitsprozess}
+%Welche Arbeitsprozesse funktionierten gut? Welche könnten verbessert werden, um effizienter zu arbeiten?
+
+Einige Arbeitsprozesse funktionierten besonders gut, wie die iterative Herangehensweise bei der Entwicklung und die kontinuierliche Überprüfung von Zwischenergebnissen. Dies trug dazu bei, Fehler frühzeitig zu erkennen und gezielt zu beheben. Zudem lief der Zusammenbau der Drohne ohne grössere Probleme.
+Auch die effiziente Zusammenarbeit im Team lieft funktionierte gut.
+
+Vierbesserungspotential gibt es bei der initialen Planung des Projekts. Der Zeitaufwand für die Analyse des Codes und die Beschaffung der benötigten Hardware wurde unterschätzt. Hier könnten in zukünftigen Projekten detailliertere Zeitpläne und  eine andere Reihenfolge der Arbeit helfen, Engpässe zu vermeiden.
+
+
+\subsection{Verbesserungsmöglichkeiten}
+%Was könnte in zukünftigen Projekten die Flugstabilität und die Effizienz der Datenanalyse verbessern?
+Man könnte bei der Arbeit das Zeitmanagement verbessern, da es uns zum Schluss ein bisschen abhanden gekommen ist. Zudem könnte man einen grösseren Zeitpuffer einbauen, damit dieser nicht vollständig ausgenutzt werden muss.
+Auch detailliertere Zwischenziele zu verfassen und diese dann gleich in Kapiteln zu erreichen wäre eine gute Strategie.
+
+Wie man allerdings den Landeschalter weiter optimieren und verbessern könnte ist im \hyperref[sec:ausblick]{Fazit unter Ausblick} geschildert.
+
+\section{Praktische Anwendungen}
+
+\subsection{Mögliche Einsatzgebiete}
+%Wo könnten die Ergebnisse des Projekts in der Praxis angewendet werden?
+
+In der Praxis könnte ein weiter Entwickelter Landeschalter in vielen Bereichen von grosser Bedeutung sein, insbesondere in der Logistik und bei der Lieferung von Paketen per Drohne. Auch in der Überwachung, bei Inspektionen von Infrastrukturen oder in der Landwirtschaft, wo Drohnen häufig präzise Landungen durchführen müssen, könnte dieser Landeschalter helfen, die Effizienz und Sicherheit zu steigern. Die Entwicklung eines funktionalen Landeschalters ist besonders in städtischen Umgebungen wichtig, wo eine präzise Landung notwendig ist, um Kollisionen mit Hindernissen zu vermeiden. Während es gelungen ist, den Landeschalter in mehreren Szenarien funktionsfähig zu machen, wurden nicht alle Bedingungen optimal berücksichtigt, was die Anwendung in komplexeren Umgebungen noch einschränkt. Dennoch stellt der entwickelte Landeschalter einen ersten wichtigen Schritt in Richtung eines zuverlässigen Systems dar, das bei der Durchführung automatisierter Landungen von Drohnen verwendet werden kann.
+
+
+
+
+\subsection{Kommerzielle oder wissenschaftliche Relevanz}
+%Hat das Projekt Potenzial für kommerzielle Anwendungen oder weiterführende wissenschaftliche Forschung?
+
+Kommerziell könnte ein weiter Entwickelter Landeschalter für Unternehmen, die Drohnen für die Lieferung von Waren oder die Durchführung von Inspektionsaufgaben einsetzen, von grossem Nutzen sein. Der Landeschalter trägt dazu bei, den Landungsprozess sicherer und effizienter zu gestalten, was insbesondere für den grossflächigen Einsatz von Drohnenflotten von Bedeutung ist. 
+Die Forschung im Bereich autonomer Systeme und der Optimierung von Landeverfahren könnte durch die Ergebnisse dieses Projekts gefördert werden, auch wenn noch weitere Anpassungen erforderlich sind, um die Leistung des Landeschalters unter verschiedenen Umweltbedingungen zu verbessern.
+Der Landeschalter zur jetztigen Zeit geht wegen den Günden, die im \hyperref[sec:Fazit6]{Fazit der Programmierung der Firmware} geschildert sind noch nicht. 
+\section{Fazit}
+
+\subsection{Zusammenfassung}
+%Die wichtigsten Ergebnisse des Projekts sind die Datenanalyse und die stabile Flugleistung.
+Zusammenfassend wurden alle Ziele erfolgreich erreicht. Die Arbeit hat gezeigt, dass eine systematische Herangehensweise an Hardwareauswahl, Codeanalyse und Softwareentwicklung zu einer robusten und funktionsfähigen Lösung führt. Einige Herausforderungen, wie die Abdrift im Auto-Land-Modus und die Empfindlichkeit des Barometers gegenüber Eigenwind in Bodennähe, konnten im Rahmen dieser Arbeit nicht vollständig gelöst werden. Aber wir haben einen Landeschalter für die Drohnen entwickelt und programmiert, der auf den Messwerten eines Barometers basiert. Dieser Schalter ermöglicht es der Drohne, kontrolliert abzusinken. Um jedoch ein Wegdriften der Drohne während des Landevorgangs zu vermeiden, wird der Prozess nach 5 Sekunden abgebrochen, falls die Landung nicht abgeschlossen ist. Diese Begrenzung war notwendig, da wir keine GPS-Unterstützung im System implementiert haben. 
+
+
+
+
+\subsection{Ausblick}\label{sec:ausblick}
+In zukünftigen Projekten könnten weitere Verbesserungen an der Drohne vorgenommen werden, um den Landeschalter zu einem zuverlässigen und sicheren System weiterzuentwickeln. Hierfür müssen mehrere Aspekte berücksichtigt und optimiert werden:
+\begin{enumerate}
+\item \textbf{Integration eines GPS-Moduls:} \\
+Die Hinzufügung eines GPS-Systems würde die Positionskontrolle während der Landung erheblich verbessern und das Risiko des Wegdriftens eliminieren. Dadurch könnte der Landeprozess sicherer und effizienter gestaltet werden, insbesondere in Umgebungen mit starkem Wind.
+	
+\item \textbf{Optimierung der Barometerdaten:} \\
+Die Abhängigkeit von einem Barometer bringt Herausforderungen mit sich, da äussere Faktoren wie Temperaturschwankungen oder schnelle Luftdruckänderungen bei Veränderung der Wetterlage die Messgenauigkeit beeinflussen können. Eine Kalibrierung des Barometers und der Einsatz zusätzlicher Sensoren (z. B. Inertialsensoren oder LiDAR\footnote{"Lidar ist eine Lasertechnologie, die die Oberflächen eines Objekts oder eines Raums dreidimensional erfasst. Das Wort "Lidar" ist eine Abkürzung für LIght Detection And Ranging."\cite{LiDAR}}) könnten die Präzision der Höhenmessung steigern.
+	
+\item \textbf{Failsafe-Mechanismen:} \\
+Der Failsafe-Mechanismus sollte ohne die Frist von 5 Sekunden implementiert werden, um die Drohne in kritischen Situationen sicher zu landen.
+	
+\item \textbf{Verbesserung der Sensorfusion:} \\
+Die Kombination von Daten aus mehreren Sensoren wie Barometer, GPS und Beschleunigungsmessern könnte die Zuverlässigkeit und Genauigkeit des Systems erheblich erhöhen. Dies würde helfen, präzisere Landungen auch in komplexen Umgebungen durchzuführen.
+	
+\item \textbf{Testen in realistischen Szenarien:} \\
+Das System sollte umfangreich in realen Einsatzszenarien getestet werden, um potenzielle Schwächen zu identifizieren und zu beheben. Dazu gehören städtische Gebiete mit Hindernissen, offene Felder und Umgebungen mit ungünstigen Wetterbedingungen.
+\end{enumerate}
+
+
+
+Mit den genannten Verbesserungen könnte das System deutlich an Effizienz und Sicherheit gewinnen. Ein weiterentwickelter Landeschalter, der GPS-Daten und Sensorfusion nutzt, wäre nicht nur in der Lage, präzise zu landen, sondern auch verschiedene Szenarien wie Notlandungen oder Landungen auf beweglichen Plattformen (z. B. Booten) zu bewältigen. 
+
+Insgesamt hat dieses Projekt einen wichtigen ersten Schritt in die richtige Richtung gemacht. Mit gezielten Weiterentwicklungen und einer breiteren Integration von Technologien hat der Landeschalter das Potenzial, zu einem robusten und zuverlässigen System für autonome Drohnenlandungen zu werden. Der erste Meilenstein wurde also erreicht und damit auch unser Ziel im Rahmen dieser Arbeit
+

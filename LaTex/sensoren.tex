@@ -1,0 +1,31 @@
+\chapter{Die Sensoren}\label{sec:Sensoren}
+
+Sensoren arbeiten zusammen, um einer Drohne ein Gehirn zu geben. Sie ermöglichen präzises Fliegen, automatische Funktionen und helfen, die Drohne besser zu verstehen und zu kontrollieren.
+
+  \section{IMU (Gyroskop) }  
+Das IMU, oft auch einfach Gyroskop genannt, ist wie ein kleiner Beschleunigungsmesser in dem Flugcontroller. Es misst, wie schnell und in welche Richtung sich die Drohne dreht.
+Dank des IMU weiss die Drohne immer genau, wie sie im Flug ausgerichtet ist und kann entsprechend korrigieren, um stabil zu fliegen. Das IMU ist wie das innere Gleichgewichtsorgan, das die Drohne auf Kurs hält. Beim Menschen wäre dies das Innenohr.
+Die IMU, bestehend aus einem Beschleunigungssensor und einem Gyroskop, misst die lineare Beschleunigung und die Winkelgeschwindigkeit der Drohne in drei Raumrichtungen (x, y, z). Der Beschleunigungssensor erfasst Änderungen der Geschwindigkeit und ermöglicht so die Berechnung der Beschleunigung. Meistens wird ein kapazitiver oder piezoresistiver Beschleunigungssensor verwendet. Das Gyroskop misst die Winkelgeschwindigkeit um die drei Achsen. Häufig wird ein MEMS-Gyroskop (Micro-Electro-Mechanical Systems) eingesetzt, das auf dem Coriolis-Effekt basiert. Die Corioliskraft ist die Kraft, die durch die Rotation der Erde um ihre eigene Achse entsteht. Auf der Nordhalbkugel werden die Teilchen nach rechts und auf der Südhalbkugel nach links abgelenkt. Hurrikane oder der Wasserabfluss drehen auf der Nordhälfte der Erde andersherum als auf der Südhälfte\cite{Coriolis}. Durch die Kombination der Daten von Beschleunigungssensor und Gyroskop kann die genaue Orientierung der Drohne im Raum bestimmt werden. Dies geschieht  indem die Daten durch ein Kalman-Filter\footnote{Der Kalman-Filter ist ein mathematisches Verfahren zur Schätzung von Systemzuständen, die nicht direkt messbar sind, auf der Grundlage fehlerhafter Beobachtungen. Er kombiniert in jedem Schritt neue Messungen mit bisherigen Schätzungen, um den Fehler zu minimieren. Besonders ist, dass der Filter neben den Schätzwerten auch die Unsicherheiten und Korrelationen zwischen den Schätzfehlern berücksichtigt. Dadurch kann er dynamische Größen wie Position und Geschwindigkeit präzise schätzen. Der Kalman-Filter wird in vielen technischen Bereichen eingesetzt, etwa zur Positionsbestimmung oder in elektronischen Steuerungssystemen.\cite{Kalman}} verarbeitet werden, um eine optimale Schätzung des Zustands der Drohne zu erhalten. Diese IMU-Daten dienen als Grundlage für die Regelung der Fluglage und zur Stabilisierung der Drohne.
+
+
+
+
+  \section{Barometer }  
+Das Barometer misst den Luftdruck. Das klingt vielleicht nicht so spannend, aber für eine Drohne ist das enorm wichtig. Durch den Luftdruck kann die Drohne ihre Höhe über dem Boden bestimmen. Das ist besonders nützlich für die vertikale Geschwindigkeit und den sogenannten "Altitude Hold"-Modus, bei dem die Drohne automatisch ihre Höhe beibehält. In Barometern wird meistens wird ein piezoresistiver\footnote{Ein piezoresistiver Drucksensor arbeitet, indem er die Widerstandsänderung eines Materials misst, wenn Druck auf eine Siliziummembran ausgeübt wird. Auf dieser Membran befinden sich vier Widerstände, die sich verformen, sobald Druck ausgeübt wird, was zu einer Änderung des elektrischen Widerstands führt. Diese Veränderung wird durch eine Wheatstone-Brücke in ein elektrisches Signal umgewandelt. Piezoresistive Drucksensoren sind aufgrund ihrer geringen Produktionskosten weit verbreitet und finden Anwendung in der Automobilindustrie, in Haushaltsgeräten und in Konsumgütern.\cite{Corioliskraft}} oder kapazitiver\footnote{Ein kapazitiver Drucksensor verwendet zwei parallel angeordnete Platten, von denen eine fest und die andere druckempfindlich ist. Wenn Druck auf die bewegliche Platte ausgeübt wird, verändert sich der Abstand zwischen den Platten und damit die Kapazität des Systems. Diese Kapazitätsänderung wird in ein elektrisches Signal umgewandelt. Kapazitive Drucksensoren zeichnen sich durch hohe Genauigkeit und Langzeitstabilität aus und werden daher in medizinischen und sicherheitskritischen Anwendungen bevorzugt eingesetzt.\cite{Corioliskraft}\footnote{https://esenssys-com.translate.goog/capacitive-piezoresistive-pressure-sensors-differences/?\_x\_tr\_sl=en\&\_x\_tr\_tl=de\&\_x\_tr\_hl=dev\&\_x\_t\r\_pto=rq\#:~:text=Technology\\20comparison\%2C\%20capacitive\%20vs\%20piezoresistive,and\%20lower\%20total\%20error\%20band.}} Drucksensor verwendet. Der Luftdruck nimmt mit zunehmender. Durch den Vergleich des gemessenen Luftdrucks mit einem Referenzwert kann die Höhe der Drohne über dem Boden bestimmt werden.
+
+
+\section{OSD-Chip } 
+Der OSD-Chip (On-Screen Display) ist für die kleinen Anzeigen zuständig, die man während des Fluges auf dem Display oder der FVP (First Person View) Brille sieht. Darauf sind wichtige Informationen wie die Höhe, Geschwindigkeit, Akku-Spannung und vieles mehr. Das hilft, den Flug besser zu überwachen und sicherzustellen, dass alles in Ordnung ist.
+
+
+  \section{Blackbox-Analysator }  Blackbox-Analysator
+Der Blackbox-Analysator speichert alle wichtigen Daten während deines Fluges. Wenn mal etwas nicht so läuft, wie es soll, kann man sich die Daten später ansehen und herausfinden, was passiert ist. Das ist sehr hilfreich, um Probleme zu beheben und das Flugverhalten zu verbessern. 
+
+
+
+
+
+
+
+
+

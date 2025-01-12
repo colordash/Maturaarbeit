@@ -1,0 +1,97 @@
+\chapter{Kompilierung}\label{sec:compilieren}
+
+\section{Technischer Ablauf}
+\LaTeX-Dateien (Dateiendung \texttt{.tex})
+sind einfache Text-Dateien (d.h. nur Buchstaben, keine
+Formatierung). 
+Sie können mit einem beliebigen Text-Editor bearbeitet werden.
+Spezialiserte Editoren oder Modi sind aber empfehlenswert.\\
+%
+Aus den \LaTeX-Dateien wird dann eine PDF-Datei erzeugt.
+Diesen Vorgang nennt man {\em kompilieren}.\\
+%
+Bei der Kompilierung gibt es mehrere Schritte, die bis auf einen
+vom Programm \texttt{pdflatex} erledigt werden.
+\begin{itemize}
+	\item Setzen des Text und <<Sammeln>> der Verweise.
+	\item Abermaliges Setzen und Einfügen der Verweise.
+	\item Setzen des Literaturverzeichnisses 
+		(hier mit \texttt{biber}, früher mit \texttt{bibtex}).
+	\item Abermaliges Setzen und Einfügen der Verweise.
+\end{itemize}
+Je nach Editor müssen diese Schritte manuell angestossen werden
+oder erfolgen automatisch (z.B. mit \TeX{}Studio) oder dem 
+beiliegenden \texttt{Makefile}, siehe \autoref{sec:make}.
+
+\section{Installation der Software}
+
+\subsection{Windows}\label{sec:windows}
+Für alle \LaTeX{}-Pakete und Programme zur Kompilierung wird
+MiK\TeX{} empfohlen, hier zu finden:
+\begin{center}
+\url{https://miktex.org/download}
+\end{center}
+\noindent Bei der Installation empfehle ich alle default-Einstellung, bis
+auf die Einstellung 
+<<{\em Pakete ohne Nachfrage automatisch nachinstallieren}>>, die
+ich empfehlen kann.
+
+Nach der Installation soll gerne nach Updates gesucht werden. Diese werden nach
+ca. 1 min auch zur Installation angeboten und sollten dann eingespielt werden.
+
+
+\noindent Als Editor kann ich \TeX{}studio empfehlen, hier zu finden:
+
+\begin{center}
+\url{https://www.texstudio.org/}
+\end{center}
+
+\noindent Von \TeX{}live und \TeX{}works kann ich nicht viel Gutes berichten.
+
+
+\subsection{Mac}
+Da gibt es offenbar \href{https://tug.org/mactex/}{MacTeX
+  (https://tug.org/mactex/)}. Wird wohl gut sein.
+
+\subsection{Cloud-Lösung Overleaf}
+Cloud-Lösung für \LaTeX. Sorgen Sie für ein regelmässiges lokales
+Backup (wie bei allen Cloud-Diensten sind Ihre Daten auf fremden Datenträgern).
+
+\subsection{Linux}\label{sec:linux}
+Für Ubuntu sollten folgende Pakete installiert werden:\\[2mm]
+%
+\texttt{
+sudo apt install texlive-latex-base texlive-pictures texlive-science\\ 
+sudo apt install texlive-latex-extra texlive-lang-german biber
+}\\[2mm]
+Hinweis: \TeX{}studio gibt es auch für Linux.
+
+\section{Kompilierung mit make}\label{sec:make}
+Das Programm \texttt{make} erlaubt es, Abhängigkeiten zu definieren
+wie aus welchen Dateien weitere erzeugt werden sollen. Das wird normalerweise
+in der Softwareentwicklung verwendet, eignet sich aber auch für die 
+Kompilierung dieses Dokuments.\\
+%
+Das Programm \texttt{make} kann durch Installation des 
+folgendes Pakets installiert werden:
+
+\texttt{
+	sudo apt install build-essential
+}
+
+\noindent Für diese Vorlage wurde das Makefile in \autoref{lst:makefile} verwendet.
+
+\lstinputlisting[
+	language=make,
+	label=lst:makefile,
+	caption={[Makefile]Das Makefile, das diese Dokument kompiliert.},
+% linerange={88-93},firstnumber=88
+]{Makefile}
+
+
+Die einzelnen Kommandos können natürlich auch manuell eingegeben
+werden. Gerade für grössere Projekte eignen sich Makefiles aber, da
+alle Abhängigkeiten spezifiziert werden können. Z.B.\ können auch
+programmatisch erzeugte Grafiken automatisch neu erstellt werden, wenn
+die zugrundeliegenden Daten sich ändern.
+

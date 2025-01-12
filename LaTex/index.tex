@@ -1,0 +1,319 @@
+\documentclass[a4paper,11pt]{report}
+% !BIB TS-program = biber
+% !BIB program = biber
+% Die beiden obigen Zeilen helfen TeXShop auf Mac mit biber
+% (Verarbeitung der Bibliographiedatenbank in literatur.bib)
+
+
+
+% Diese Datei ist fast vollständig von der Maturaarbeit
+%
+% Programmierung eines Generators für Trennlinien
+% bzw. Schnittkurven von Puzzleteilen
+%
+% vorgelegt von Luca Bosin im Januar 2019, übernommen.
+%
+% Ihm sei herzlich gedankt.
+
+
+% ======== START VON PAKETE LADEN =========
+
+\usepackage[german]{babel}        % Deutschsprachige Beschriftungen
+\usepackage[utf8]{inputenc}       % Utf8 Zeichensatz
+\usepackage[T1]{fontenc}          % Schriftenkodierung
+\usepackage[lighttt]{lmodern}     % Schriftart
+\usepackage{amsmath}              % Mathematische Formeln
+\usepackage[normalem]{ulem}       % Durchgestrichener Text
+\usepackage{xcolor}               % Farbiger Text
+\usepackage{verbatim}             % Text ohne Formatierung
+\usepackage{listings}             % Code mit Formatierung
+\usepackage{csquotes}             % Kontextsensitive Zitatanlage
+\usepackage{caption}              % Erweiterte Beschriftungen
+\usepackage{subcaption}           % Unterbeschriftungen
+\usepackage{geometry}             % Seitenränder
+\usepackage{setspace}             % Zeilenabstand
+\usepackage{fancyhdr}             % Header und Footer
+\usepackage{graphicx}             % Grafiken
+\usepackage{wrapfig}
+\usepackage{svg}                  % SVG Grafiken
+\usepackage{booktabs}             % Tabellen
+\usepackage{tabularx}             % Breite von Boxen
+\usepackage[style=ieee]{biblatex} % Referenzen
+\usepackage{hyperref}             % Hyperlinks im PDF-Dokument
+\usepackage{hyperxmp}             % Metadaten im PDF-Dokument
+\usepackage{makeidx}              % Optional, für Glossar (Index)
+\usepackage[version=4]{mhchem}    % Für chemische Formeln
+\usepackage{siunitx}              % Angaben mit Masseinheiten
+%\usepackage[none]{hyphenat} 	  %ev.wenn nicht trennen
+%\sloppy						  %ev.wenn nicht trennen
+%gewagt
+\usepackage{longtable} % Für Tabellen über mehrere Seiten
+\usepackage{array}     % Für erweiterte Tabellenoptionen
+\usepackage{booktabs}  % Für schönere Tabellen
+
+\makeindex
+% ========= ENDE VON PAKETE LADEN =========
+
+
+% ==== START VON DOKUMENTEIGENSCHAFTEN ==== (Dokument)
+\title                   % Titel festlegen
+{Bau einer Drohne und Analyse deren Software}
+\date{28. Juni 2024 (\today)}   % Datum festlegen 
+\author{Jamil Sostizzo, Nicolas Klubertanz}  % Autor festlegen
+\makeatletter            % Erlaubt das Auslesen der obigen Eigenschaften
+\let\papertitle\@title   % Titel in \papertitle speichern
+\let\paperdate\@date     % Datum in \paperdate speichern
+\let\paperauthor\@author % Autor in \paperauthor speichern
+\makeatother
+\def\paperinstitution    % Bildungseinrichtung in \paperinstitution speichern
+{Kantonsschule am Burggraben St.Gallen}
+\def\papertype           % Art dieser Arbeit in \papertype speichern
+{Maturaarbeit}
+\def\papersupervisor     % Betreuungsperson in \papersupervisor speichern
+{Dr. Ivo Blöchliger}
+% Achtung: Schlüsselwörter sind weiter unten definiert!
+% ==== ENDE VON DOKUMENTEIGENSCHAFTEN =====
+
+
+
+% =========================================
+
+
+
+% ======= START VON TITEL ANPASSEN ======== (Beschriftungen)
+% \renewcommand{\lstlistingname}{lcode}
+\renewcommand{\lstlistlistingname}{Quellcodeverzeichnis}
+\DefineBibliographyStrings{german}{bibliography = {Literaturverzeichnis}}
+% ======== ENDE VON TITEL ANPASSEN ========
+
+
+
+% === START VON SCHRIFTPROBLEME BEHEBEN === (Schriftart)
+% Die Schreibmaschinen-Schrift lädt nur den normalen Stil, nicht den fetten oder den kursiven
+\ttfamily
+\DeclareFontShape{T1}{lmtt}{m}{it}{<->sub*lmtt/m/sl}{}
+% === ENDE VON SCHRIFTPROBLEME BEHEBEN ====
+
+
+
+% ========= START VON CODEBLÖCKE ========== (Codeblöcke)
+\lstset{
+  frame=tb,                         % Rahmenlinien (tb = top,bottom)
+  language=Java,                    % Programmiersprache (für Syntax-Hervorhebung)
+  showstringspaces=false,           % Leerzeichen in Strings ausblenden
+  basicstyle=\small\ttfamily,       % Style des Codes
+  numbers=left,                     % Position der Zeilennummern
+  numberstyle=\tiny\textbf,         % Style der Zeilennummern
+  keywordstyle=\textbf,             % Style der Schlüsselwörter
+  commentstyle=\color{gray}\textit, % Style der Kommentare
+  columns=fullflexible,             % Zeilenumbrüche: Bis an Seitenrand
+  breaklines=true,                  % Zeilenumbrüche: Erlauben von Zeilenumbrüchen
+  breakatwhitespace=true,           % Zeilenumbrüche: Erlauben von Zeilenumbrüchen bei Leerzeichen
+  tabsize=4,                        % Grösse der Tabulatoren (Hard-Tab)
+}
+% Unterstützung von Sonderzeichen
+\lstset{literate=
+  {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {Á}{{\'A}}1 {É}{{\'E}}1 
+  {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1 {à}{{\`a}}1 {è}{{\`e}}1 {ì}{{\`i}}1 {ò}{{\`o}}1
+  {ù}{{\`u}}1 {À}{{\`A}}1 {È}{{\'E}}1 {Ì}{{\`I}}1 {Ò}{{\`O}}1 {Ù}{{\`U}}1 {ä}{{\"a}}1
+  {ë}{{\"e}}1 {ï}{{\"i}}1 {ö}{{\"o}}1 {ü}{{\"u}}1 {Ä}{{\"A}}1 {Ë}{{\"E}}1 {Ï}{{\"I}}1
+  {Ö}{{\"O}}1 {Ü}{{\"U}}1 {â}{{\^a}}1 {ê}{{\^e}}1 {î}{{\^i}}1 {ô}{{\^o}}1 {û}{{\^u}}1
+  {Â}{{\^A}}1 {Ê}{{\^E}}1 {Î}{{\^I}}1 {Ô}{{\^O}}1 {Û}{{\^U}}1 {œ}{{\oe}}1 {Œ}{{\OE}}1
+  {æ}{{\ae}}1 {Æ}{{\AE}}1 {ß}{{\ss}}1 {ű}{{\H{u}}}1 {Ű}{{\H{U}}}1 {ő}{{\H{o}}}1 {Ő}{{\H{O}}}1
+  {ç}{{\c c}}1 {Ç}{{\c C}}1 {ø}{{\o}}1 {å}{{\r a}}1 {Å}{{\r A}}1 {€}{{\euro}}1 {£}{{\pounds}}1 {«}{{\guillemotleft}}1 {»}{{\guillemotright}}1 {ñ}{{\~n}}1 {Ñ}{{\~N}}1 {¿}{{?`}}1
+}
+% Zugriff zu Code-Dateien vereinfachen
+\newcommand{\codetype}[1]{\gdef\currentcodetype{#1}} % Befehl zum Festlegen des Codedateityps
+\newcommand{\codepackage}[1]{\gdef\currentcodepackage{#1}} % Befehl zum Festlegen des aktuellen Codepakets
+\newcommand{\codefileprefix}[1]{\gdef\currentcodefileprefix{#1}} % Befehl zum Festlegen des Codedatei-Präfixes
+\gdef\codefilename#1{#1.\currentcodetype} % Gibt Ausgabe "Code.Dateityp"
+\gdef\codereference#1{\currentcodepackage.#1} % Gibt Ausgabe "paket.Code"
+\gdef\codefile#1{\currentcodefileprefix\currentcodepackage.#1.\currentcodetype} % Gibt vollständigen Pfad zu Codedatei zurück
+
+% -----------------------------------------
+
+% Festlegen des Codetyps, Pakets und Dateipräfixes
+\codetype{java}
+\codepackage{benjholla}
+\codefileprefix{code/}
+
+% Code-Blöcke für LaTeX-Codes, inspiriert von
+%https://tex.stackexchange.com/questions/209529/adding-a-caption-to-lstnewenvironment-using-mdframed
+\lstnewenvironment{latexcode}[2][]{
+  \lstset{language=[LaTeX]TeX, numbers=none, caption={[#1]{#1}}, label={#2}}}{%
+  \ignorespaces
+}
+% ========= ENDE VON CODEBLÖCKE ===========
+
+
+
+% ======== START VON SEITENRÄNDER ========= (Seitenränder)
+\geometry{
+  a4paper,
+  total={150mm,237mm},
+  left=30mm,
+  top=30mm,
+}
+\setlength{\headheight}{14pt}
+\setlength{\parindent}{0pt}
+
+% ========= ENDE VON SEITENRÄNDER =========
+
+
+
+% ====== START VON QUELLBIBLIOTHEKEN ====== (Referenzen)
+\addbibresource{literatur.bib}
+% ====== ENDE VON QUELLBIBLIOTHEKEN =======
+
+
+
+% ========= START VON METADATEN ===========
+\hypersetup{
+pdftoolbar=true,           % Toolbar anzeigen?
+pdfmenubar=true,           % Menüleiste anzeigen?
+pdffitwindow=false,        % Fenstergrösse anpassen?
+pdfstartview={FitH},       % Breite dem Fenster anpassen
+pdftitle={\papertitle},    % Titel
+pdfauthor={\paperauthor},  % Autor
+pdfsubject={\papertype},   % Thema
+pdfcreator={pdfLaTeX},     % PDF-Ersteller
+pdfproducer={\paperauthor},% Dokument-Ersteller
+pdfkeywords={\paperinstitution} {\papersupervisor} % Schlüsselwörter
+    {LaTex} {Vorlage} {Maturaarbeit} {KSBG},
+pdfnewwindow=true,         % Links in neuem Fenster?
+colorlinks=false,          % Farbige Links: true, Link-Boxen: false
+linkcolor=red,             % Farbe interner Links
+citecolor=green,           % Farbe der Zitat-Links
+filecolor=magenta,         % Farbe der Datei-Links
+urlcolor=cyan              % Farbe externer Links
+bookmarks=true             % Lesezeichen erstellen?
+bookmarksdepth=section     % Lesezeichen bis zu Abschnitten
+bookmarksopen=false        % Lesezeichen öffnen?
+bookmarksnumbered=true     % Kapitelnummern in Lesezeichen?
+}
+\pdfinfo{
+/Title  (\papertitle)
+/Author (\paperauthor)
+/Subject (\papertype)
+/Keywords (\paperinstitution;\papersupervisor;LaTex;Vorlage;Maturaarbeit;KSBG)
+}
+% ========== ENDE VON METADATEN ===========
+
+
+
+% ========== START VON BILDPFADE ==========
+\graphicspath{{img/pdf/}{img/png/}}
+\svgpath{{img/svg/}}
+% =========== ENDE VON BILDPFADE ==========
+
+
+
+% =============================================================
+\begin{document} % START VOM DOKUMENT =========================
+% =============================================================
+
+% === TITELSEITE ===
+\input{title} %     \
+% ------------------
+
+% === INHALTSVERZEICHNIS ===
+\tableofcontents %          \
+\newpage %                  \
+% --------------------------
+
+
+
+% =========== START VON STYLING ===========
+\onehalfspacing % Zeilenabstand 1.5
+\renewcommand{\chaptermark}[1]{\markboth{\MakeUppercase{\thechapter.\ #1}}{}} % Kapitel
+\renewcommand{\sectionmark}[1]{\markright{\thesection.\ #1}{}} % Abschnitt
+\fancyhead[R]{\rightmark}
+\fancyhead[L]{\leftmark}
+%\fancyhead[C]{\thepage{}} % Seitennummer
+\fancyfoot{}
+\fancyfoot[C]{\thepage} % Seitenzahl unten in der Mitte
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{\rightmark}
+
+\pagestyle{fancy}
+% =========== ENDE VON STYLING ============
+
+% === KAPITEL DER ARBEIT ===
+\input{vorwort}
+\input{einleitung}
+\input{zielsetzung}
+\input{teile}
+% \input{gitcode}%brüche mer nid
+\input{zusammenbauDrohne}	
+\input{fernbedienung}
+\input{firmware}	
+\input{resultate}
+\input{danksagung}
+%\input{extrabildli}
+% ab hier ist es nicht von uns sonder von der Vorlage
+
+%\input{unnötig}
+%\input{literatur} %       \
+%\input{grafiken} %        \
+%\input{compilieren} %     \
+%\input{mathezeugs} %      \
+%\input{darstellung}
+%\input{massangaben} %      \
+%\input{chemie} %      \
+%\input{code} %            \
+%\input{praesentation}
+
+% --------------------------
+
+% === Optional: INDEX ====
+\cleardoublepage  %      \  
+\phantomsection %        \
+\addcontentsline{toc}{chapter}{\indexname} 
+\printindex %            \
+% ------------------------
+
+
+% === ABBILDUNGSVERZEICHNIS ===
+\cleardoublepage %             \
+\phantomsection %              \
+\addcontentsline{toc}{chapter}{\listfigurename}
+\listoffigures %               \
+% -----------------------------
+
+% === CODEBLOCKVERZEICHNIS ===
+\cleardoublepage %            \
+\phantomsection %             \
+\addcontentsline{toc}{chapter}{\lstlistlistingname}
+\lstlistoflistings %          \
+% ----------------------------
+
+% === LITERATURVERZEICHNIS ===
+\cleardoublepage %            \
+\phantomsection %             \
+\addcontentsline{toc}{chapter}{\bibname}
+\printbibliography %          \
+% ----------------------------
+% =========== START VON ANHÄNGE ===========
+\appendix
+
+% === EIGENSTÄNDIGKEITSERKLÄRUNG ===
+\chapter{Eigenständigkeitserklärung}\label{ch:appendix_independencedeclaration}
+\input{eigenstaendigkeit}
+% ----------------------------------
+
+
+\chapter{Informationen über die Teile}\label{ch:infoteile}
+\input{infoteile}\label{infoteile}
+
+\chapter{Bilddokumentation Zusammenbau}\label{ch:aufbaubilder}
+\input{aufbaubilder}
+
+
+
+% =========== ENDE VON ANHÄNGE ============
+
+
+
+% =============================================================
+\end{document} % ENDE VOM DOKUMENT ============================
+% =============================================================

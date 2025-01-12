@@ -1,0 +1,36 @@
+\chapter{Zielsetzung}
+
+Das übergeordnete Ziel dieser Arbeit besteht darin, einen Schalter zu implementieren, der es der Drohne ermöglicht, aus einer beliebigen Höhe automatisch zu landen. Um dieses Ziel zu erreichen, müssen verschiedene Teilziele bearbeitet werden. Diese umfassen das Verständnis des zugrunde liegenden Codes sowie die Implementierung und Optimierung der Fluglogik und des Failsafe-Modus.
+
+\section{Hardware}
+
+Die vorliegende Arbeit zielt darauf ab, die für den Flug essenziellen Hardwarekomponenten zu selektieren und zu montieren, sodass die Drohne danach einwandfrei fliegt. Die Auswahl der Komponenten, zu denen Flugcontroller, Motoren, Sensoren und Akkus zählen, erfolgt mit Bedacht, um eine optimale Leistung und Stabilität der Drohne zu gewährleisten. Die Auswahl der Komponenten ist in der Arbeit unter \autoref{sec:Teile} zu finden. Die Installation der Motoren, Propeller und Sensoren sowie die Verkabelung aller elektrischen Komponenten (siehe hierzu auch: \autoref{ch:ZusammenbauDrohne}) wurde selbstständig geplant und durchgeführt. Im Anschluss an den Zusammenbau erfolgen Versuche, um die korrekte Funktion aller Systeme sicherzustellen und die Implementierung des Schalters zur Landung in der Software zu ermöglichen (siehe hierzu auch: \autoref{sec:tests}).
+
+
+\begin{comment}
+
+\section{Analyse und Verständnis der Sensordaten}
+
+Danach kommt die Analyse und das Verständnis der Sensordaten, die von der Drohne geliefert werden. Diese Sensordaten stammen aus verschiedenen Sensoren wie Gyroskopen und Beschleunigungsmessern die wichtige Informationen zur Flugstabilität liefern. Für diese Analyse wird die Betaflight-Applikation verwendet, die die Sensordaten in Echtzeit erfasst. \par
+Die Sensordaten werden mit der Betaflight-Software erfasst, die speziell für die Konfiguration und Überwachung von Flugcontrollern in Drohnen entwickelt wurde.
+
+Nach der Datenerfassung werden die Sensordaten in Excel (\autoref{sec:tests}) eingetragen, um die Datenverarbeitung und visuelle Analyse zu erleichtern.
+
+Die aufbereiteten Daten werden analysiert, um Muster, Abweichungen und mögliche Instabilitäten im Flugverhalten der Drohne zu identifizieren. Dabei werden insbesondere die Schwankungen in den gemessenen Beschleunigungen und Drehgeschwindigkeiten untersucht.
+Ziel ist es, ein fundiertes Verständnis der Sensordaten zu erlangen, um eine Grundlage für die Programmierung der Stabilisationsfunktion zu schaffen. Dies könnte auch die Ermittlung von Schwellenwerten oder die Identifizierung kritischer Flugzustände umfassen.
+\end{comment}
+
+\section{Programmierung des Landeschalters für die Drohne}
+
+Das zweite Ziel dieser Arbeit besteht in der Programmierung der Landeschalter-Funktion für die Drohne, deren Zweck darin besteht, beim Umlegen des Landeschalters eine automatische Rückkehr der Drohne auf den Boden und eine sichere Landung zu gewährleisten. Der Prozess der Programmierung gliedert sich in die folgenden Schritte: 
+
+Zunächst wird der bestehende Sourcecode von Betaflight analysiert. Ziel ist die Identifizierung des Teils des Codes, der für die Steuerung der Drohne zuständig ist. Dazu zählen auch die Untersuchung bestehender Algorithmen und Funktionen, die für die Landung genutzt werden könnten, wie etwa die aktuellen Steuerungslogiken, die PID-Regler und der Grundaufbau des Codes, die beim Greifen des Landeschalters nützlich sein könnten.
+
+Nach der Analyse des Sourcecodes wird die Landeschalter-Funktion implementiert. Hierzu werden geeignete Algorithmen entwickelt, die die Drohne beim Umlegen des Landeschalters automatisch in einen sicheren Landeprozess versetzen. Die Algorithmen könnten auf bestehenden Algorithmen basieren, die die Position und den Zustand der Drohne überwachen, um eine sanfte und konstante Landung zu gewährleisten. Diese konstante Landung könnte mit der Abhängigkeit des Barometer kontrollieren und angepasst werden.
+
+Die Funktionalität wird in verschiedenen Testszenarien überprüft, um die Zuverlässigkeit der Drohne in unterschiedlichen Bedingungen sicherzustellen. Die Tests dienen dazu, die korrekte Reaktion der Drohne auf Steuerbefehle und die Sicherheit des Landeprozesses zu gewährleisten, wenn der Landeschalter aktiviert wird. Basierend auf den Ergebnissen der Testszenarien erfolgt eine  Optimierung der Landeschalter-Funktion.
+
+
+\section{Zusammenfassung der Ziele}
+
+Insgesamt wird sich die Arbeit auf den Zusammenbau und den Landeschalter der Drohne fokusieren, der auf einer fundierten Analyse des Sourcecodes basiert. Durch die Implementierung und Optimierung der Funktion sowie durch Tests wird sichergestellt, dass die Drohne stabil und zuverlässig landet.

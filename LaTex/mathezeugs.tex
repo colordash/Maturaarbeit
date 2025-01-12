@@ -1,0 +1,130 @@
+\chapter{Mathematik in \LaTeX}\label{sec:mathezeugs}
+Es empfiehlt sich die <<amsmath>> package einzubinden, mit
+\begin{verbatim}
+\usepackage{amsmath}
+\end{verbatim}
+
+\section{Gleichungen}
+Je nach Layout gibt es verschiedene Umgebungen. Gute Beispiele finden sich auch
+in \LaTeX{}-Dokumentation von Overleaf\cite{overleaf-equations}.
+\subsection{Einzeiler}
+Normalerweise kriegen alle Gleichungen eine Nummer wie die
+\autoref{eq:erstes-beispiel} und werden im Text referenziert.
+\begin{equation} \label{eq:erstes-beispiel}
+	B > \frac{1}{n} \sum_{i=1}^n x_i
+\end{equation}
+%
+Die \autoref{eq:erstes-beispiel} wurde durch den Code in
+\autoref{lst:erstes-beispiel} erzeugt:
+%\begin{latexcode}[Code zu \autoref{eq:erstes-beispiel}]%[erstes-beispiel]
+\begin{latexcode}[{Code zur \autoref{eq:erstes-beispiel}}]{lst:erstes-beispiel}
+\begin{equation} \label{eq:erstes-beispiel}
+    B > \frac{1}{n} \sum_{i=1}^n x_i
+\end{equation}
+\end{latexcode}
+
+
+\noindent Soll eine Gleichung oder Formel ausnahmsweise keine Nummer erhalten wie in
+\[
+	E = mc^2,
+\]
+kann der Code in \autoref{lst:keine-nummer} verwendet werden.
+\begin{latexcode}[{Nicht nummerierte Gleichung}]{lst:keine-nummer}
+\[
+    E = mc^2
+\]
+\end{latexcode}
+
+\subsection{Mehrzeiler}
+Um Umformungen von Gleichungen darzustellen, 
+eigenet sich die {\tt aligned} Umgebung, wie in 
+\autoref{eq:gleichungumformen} zu sehen:
+\begin{equation} \label{eq:gleichungumformen}
+	\begin{aligned}
+		-\frac{6}{7}x = & -\frac{10}{3}+\frac{4}{7}x & & | -\frac{4}{7}x\\
+		-\frac{10}{7}x  = & -\frac{10}{3} & & | : -\frac{10}{7}\\
+		x  = & \frac{7}{3} \\
+	\end{aligned}
+\end{equation}
+Der Code dazu gibt es in \autoref{lst:gleichungumformen}.
+Ganz ähnlich wie {\tt aligned} funktioniert die {\tt align}-Umgebung 
+(alleine, nicht innerhalb einer {\tt equation} Umgebung), 
+die dann aber jede
+Zeile durchnummeriert, was durchaus auch nützlich sein kann.
+\begin{latexcode}[Code zur \autoref{eq:gleichungumformen}]{lst:gleichungumformen}
+\begin{equation} \label{eq:gleichungumformen}
+    \begin{aligned}
+        -\frac{6}{7}x = & -\frac{10}{3}+\frac{4}{7}x & & | -\frac{4}{7}x\\
+        -\frac{10}{7}x  = & -\frac{10}{3} & & | : -\frac{10}{7}\\
+        x  = & \frac{7}{3} \\
+    \end{aligned}
+\end{equation}
+\end{latexcode}
+
+
+%
+Sollen einfach längere Umformungen dargestellt werden
+eignet sich die {\tt multline} Umgebung:
+\begin{multline} \label{eq:langeumformung}
+	f'(x) = \lim_{h \to 0} \frac{f(x+h)-f(x)}{h} = 
+	\lim_{h \to 0} \frac{a^{x+h}-a^x}{h} =  \\
+	\lim_{h \to 0} \frac{a^x \cdot a^h-a^x}{h} = 
+	\lim_{h \to 0} \frac{a^x \cdot \left(a^h-1\right)}{h} =  \\
+	a^x \cdot \lim_{h \to 0} \frac{a^{0+h}-a^0}{h} = a^x \cdot f'(0)	
+\end{multline}
+
+Der Code zu \autoref{eq:langeumformung} ist in \autoref{lst:langeumformung}
+dargestellt.
+\begin{latexcode}[Code zur \autoref{eq:langeumformung}]{lst:langeumformung}
+\begin{multline} \label{eq:langeumformung}
+    f'(x) = \lim_{h \to 0} \frac{f(x+h)-f(x)}{h} = 
+    \lim_{h \to 0} \frac{a^{x+h}-a^x}{h} =  \\
+    \lim_{h \to 0} \frac{a^x \cdot a^h-a^x}{h} = 
+    \lim_{h \to 0} \frac{a^x \cdot \left(a^h-1\right)}{h} =  \\
+    a^x \cdot \lim_{h \to 0} \frac{a^{0+h}-a^0}{h} = a^x \cdot f'(0)
+\end{multline}
+\end{latexcode}
+
+\section{Vektoren}
+
+\begin{equation}\label{eq:erste}
+\vec v = \begin{pmatrix}
+a_1\\
+a_2\\
+a_3
+\end{pmatrix}
+\end{equation}
+
+Verwendet man \autoref{eq:erste} dann erhält man:
+
+\begin{equation}\label{eq:zweite}
+\vec u = \begin{pmatrix}
+a_1+b_1\\
+a_2-\pi\\
+a_3+\cos\left(\alpha^2\right)
+\end{pmatrix}
+\end{equation}
+
+Der Code dazu ist in \autoref{lst:latex-code} ersichtlich.
+
+\begin{latexcode}[Code zu \autoref{eq:erste} und \autoref{eq:zweite}]{lst:latex-code}
+\begin{equation}\label{eq:erste}
+\vec v = \begin{pmatrix}
+a_1\\
+a_2\\
+a_3
+\end{pmatrix}
+\end{equation}
+
+Verwendet man \autoref{eq:erste} dann erhält man:
+
+\begin{equation}\label{eq:zweite}
+\vec u = \begin{pmatrix}
+a_1+b_1\\
+a_2-\pi\\
+a_3+\cos\left(\alpha^2\right)
+\end{pmatrix}
+\end{equation}
+
+Den Code dazu ist in \autoref{fig:latex-code} ersichtlich.
+\end{latexcode}

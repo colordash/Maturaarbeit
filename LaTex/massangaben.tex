@@ -1,0 +1,27 @@
+\chapter{Massangaben}\label{sec:massangaben}
+
+Sobald Masseinheiten angegeben werden, lohnt sich das package
+{\tt siunitx}\cite{siunitx}.
+
+
+\section{Beispiele}
+Mehr Beispiele finden Sie in der offiziellen Dokumentation des package.
+\begin{itemize}
+	\item Beschleunigung $g = \qty{9.81}{\metre\per\square\second}$. 
+	\verb+$g = \qty{9.81}{\metre\per\square\second}$+
+%
+	\item Strom $I = \qty{25}{\micro\ampere}$.
+		\verb+$I = \qty{25}{\micro\ampere}$+
+	\item Widerstand $R = \qty{2}{\mega \ohm}$.
+		\verb+$R = \qty{2}{\mega \ohm}$+
+\end{itemize}
+
+\section{Alte Version (v2) von siunitx}
+Sollte Ihr System noch eine alte Version von siunitx haben, verwenden Sie
+anstatt \verb+\qty+ den Befehl \verb+\SI+, also z.B.
+
+\verb+\SI{25}{\micro\ampere}  +
+anstatt
+\verb+   \qty{25}{\micro\ampere}+
+
+Siehe auch \cite{qty-vs-si}.

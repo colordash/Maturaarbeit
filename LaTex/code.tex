@@ -1,0 +1,30 @@
+\chapter{Einbinden von Code}\label{sec:code}
+Vollständige Code-Listings gehören nicht in den Bericht, sondern 
+die dem Bericht beigelegte SD-Karte.\footnote{Wobei das nicht mehr erlaubt ist,
+wie die Codes der Arbeit archiviert werden sollen, erschliesst sich
+mir nicht.}
+
+Schlüsselstellen in einem Programm machen aber durchaus Sinn,
+aufgeführt zu werden. Ein Beispiel für Python-Code 
+finden Sie im \autoref{lst:python-code}.
+
+Für \LaTeX-Code finden Sie ein Beispiel im \autoref{lst:figure-example}.
+
+Im \autoref{lst:javaquine} auf der nächste Seite ist das
+Listing eines Quines abgebildet (ein Programm, das seinen eigenen Source-Code als
+Ausgabe produziert).
+
+\section{Python Code}
+\lstinputlisting[
+label=lst:python-code,
+language=python,
+caption={Python-Code zur Erzeugung des Pascaldreiekcs},
+]{code/pascal.py}
+
+\newpage
+\section{Java Code}
+\lstinputlisting[
+label=lst:javaquine,
+caption={[JavaQuine]Ein Java Quine\cite{javaquine}},
+% linerange={88-93},firstnumber=88
+]{\codefile{Quine}}

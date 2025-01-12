@@ -1,0 +1,87 @@
+
+\chapter{Beispiele}
+\section{Eine seltsame Funktion}\label{sec:math}
+
+Gegeben ist die Funktion $f: \mathbb{R} \to \mathbb{R}$ definiert als
+\begin{equation}\label{eq:fundef}
+	f(x) = \left\{
+		\begin{array}{ll}
+			0 & \text{für } x \in \mathbb{R} \\
+			\frac{1}{q} & \text{für } x \in \mathbb{Q} \text{ mit }
+			x=\frac{p}{q},\, q \in \mathbb{N},\, p \in \mathbb{Z},\,
+			\text{ggT}(p,q)=1.
+		\end{array} \right.
+\end{equation}
+
+\begin{thm}\label{thm:seltsam}
+Die Funktion $f$ definiert in \autoref{eq:fundef} ist stetig für
+irrationale $x \in \mathbb{R}\setminus \mathbb{Q}$ und unstetig für 
+rationale $x \in \mathbb{Q}$.
+\end{thm}
+
+\subsection{Beweis von \autoref{thm:seltsam}}
+
+\begin{lem}\label{lem:lemma1}
+Sei $x_i$ eine Folge rationaler Zahlen, die gegen eine
+	irrationale Zahl $r$ konvergiert. Schreibt man 
+	$x_i=\frac{p_i}{q_i}$ mit 
+	$p_i \in \mathbb{Z}$ und $q_i \in \mathbb{N}$ gilt
+	\[
+		\lim_{n \to \infty} q_i = \infty
+	\]
+\end{lem}
+
+\begin{proof}[Beweis von \autoref{lem:lemma1}]
+
+	Wir können annehmen, dass $\text{ggT}(p_i, q_i)=1$, d.h.
+	die Brüche sind vollständig gekürzt. Der Beweis 
+	wird durch Widerspruch geführt: Nehmen wir an 
+	\[
+		q_i<N\, \forall i.
+	\]
+
+	Für alle $x_i \neq x_j$ gilt $|x_i - x_j| \geq \frac{1}{N^2}$ weil
+	\[
+		\left|\frac{a}{b} - \frac{c}{d} = \frac{ad-bc}{bd}\right| \geq
+		\frac{1}{bd} \geq \frac{1}{N^2}
+	\]
+	Da die Folge $(x_i)$ gegen $r$ konvergiert, gibt es für jedes $\epsilon>0$
+	ein Index $I$, ab dem gilt:
+	\[
+		|x_i-r|<\epsilon \quad \forall i>I
+	\]
+	Wählt man $\epsilon<\frac{1}{3N^2}$ folgt aus $|x_i - x_j| \geq
+	\frac{1}{N^2}$,
+	dass 
+	\[
+		x_i = x_j \quad \forall i,j > I
+	\]
+	Damit ist aber auch $r=x_i$ für $i>I$, was ein Widerspruch zur Annahme ist,
+	dass $r$ irrational ist.
+	
+\end{proof}
+
+
+\subsubsection{Stetigkeit für irrationale Argumente}
+\begin{proof}
+Wie in \autoref{lem:lemma1} gezeigt, sind,
+um eine irrationale Zahl $r$ mit Brüchen
+anzunähern, immer grössere Nenner $q_i$ nötig:
+\[
+	\lim_{n\to \infty} q_i = \infty
+\]
+und damit
+\[
+	\lim_{n \to \infty} \frac{1}{q_i} = 0,
+\] 
+was die Stetigkeit in irrationalen Argumenten $r$ beweist.
+\end{proof}
+
+\subsubsection{Unstetigkeit für irrationale Argumente}
+\begin{proof}
+Für jede rationale Zahl $q$ ist $f(q)>0$. 
+Für jedes $\epsilon>0$ existiert 
+eine irrationale Zahl $r$ mit $|r-q|<\epsilon$.
+Weil $f(r)=0$ ist $f$ in $q$ unstetig.
+\end{proof}
+

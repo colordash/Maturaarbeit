@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="75.098938mm"
+   height="75.803558mm"
+   viewBox="0 0 75.098938 75.803558"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   sodipodi:docname="vektor.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:zoom="0.73139029"
+     inkscape:cx="321.30588"
+     inkscape:cy="414.27949"
+     inkscape:window-width="1920"
+     inkscape:window-height="1007"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-3.0397973,-10.080677)">
+    <path
+       sodipodi:type="star"
+       style="fill:#ff0000;fill-opacity:1;stroke:#858bff;stroke-width:18.8976;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="path846"
+       inkscape:flatsided="false"
+       sodipodi:sides="5"
+       sodipodi:cx="145.61409"
+       sodipodi:cy="186.3871"
+       sodipodi:r1="141.27687"
+       sodipodi:r2="58.630184"
+       sodipodi:arg1="1.1336619"
+       sodipodi:arg2="1.7619805"
+       inkscape:rounded="0.23"
+       inkscape:randomized="0"
+       d="m 205.42296,314.3795 c -20.83137,9.73417 -48.37533,-66.06121 -70.94987,-70.43046 -22.57454,-4.36926 -76.410046,55.67529 -92.105045,38.8715 -15.695,-16.80379 47.879136,-66.42171 45.058631,-89.24155 -2.820506,-22.81983 -76.562348,-55.46566 -65.43102,-75.58514 11.131328,-20.11949 77.966266,25.01033 98.797634,15.27615 20.83137,-9.73418 29.09191,-89.954953 51.66645,-85.585694 22.57454,4.369259 0.30667,81.878944 16.00167,98.682724 15.695,16.80379 94.54214,-0.12956 97.36264,22.69028 2.8205,22.81984 -77.77674,25.59364 -88.90806,45.71313 -11.13133,20.11949 29.33834,89.87488 8.50697,99.60906 z"
+       transform="scale(0.26458333)"
+       inkscape:transform-center-x="-2.0532226"
+       inkscape:transform-center-y="-1.3255736" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:21.1667px;line-height:1.25;font-family:Helvetica;-inkscape-font-specification:Helvetica;stroke-width:0.264583"
+       x="6.9060364"
+       y="57.417458"
+       id="text3996"><tspan
+         sodipodi:role="line"
+         id="tspan3994"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Helvetica;-inkscape-font-specification:Helvetica;stroke-width:0.264583"
+         x="6.9060364"
+         y="57.417458">Vektor!</tspan></text>
+  </g>
+</svg>

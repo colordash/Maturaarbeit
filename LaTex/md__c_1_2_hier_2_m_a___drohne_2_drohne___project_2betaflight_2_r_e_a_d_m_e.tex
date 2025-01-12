@@ -1,0 +1,138 @@
+\chapter{README}
+\label{md__c_1_2_hier_2_m_a___drohne_2_drohne___project_2betaflight_2_r_e_a_d_m_e}\index{README@{README}}
+
+
+{\texttt{ }} {\texttt{ }} {\texttt{ }} {\texttt{ }}
+
+Betaflight is flight controller software (firmware) used to fly multi-\/rotor craft and fixed wing craft.
+
+This fork differs from Baseflight and Cleanflight in that it focuses on flight performance, leading-\/edge feature additions, and wide target support.\doxysubsection{Events}\label{md__c_1_2_hier_2_m_a___drohne_2_drohne___project_2betaflight_2_r_e_a_d_m_e_autotoc_md14}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{2}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Date   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Event    }\\\cline{1-2}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Date   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Event    }\\\cline{1-2}
+\endhead
+28-\/04-\/2024   &Firmware 4.\+5 Release   \\\cline{1-2}
+\end{longtabu}
+\doxysubsection{News}\label{md__c_1_2_hier_2_m_a___drohne_2_drohne___project_2betaflight_2_r_e_a_d_m_e_autotoc_md15}
+\doxysubsubsection{Requirements for the submission of new and updated targets}\label{md__c_1_2_hier_2_m_a___drohne_2_drohne___project_2betaflight_2_r_e_a_d_m_e_autotoc_md16}
+The following new requirements for pull requests adding new targets or modifying existing targets are put in place from now on\+:
+
+
+\begin{DoxyEnumerate}
+\item Read the {\texttt{ hardware specification}}
+\item No new F3 based targets will be accepted;
+\item For any new target that is to be added, only a Unified Target config into {\texttt{ https\+://github.\+com/betaflight/unified-\/targets/tree/master/configs/default}} needs to be submitted. See the {\texttt{ instructions}} for how to create a Unified Target configuration. If there is no Unified Target for the MCU type of the new target (see instructions above), then a \textquotesingle{}legacy\textquotesingle{} format target definition into {\ttfamily src/main/target/} has to be submitted as well;
+\item For changes to existing targets, the change needs to be applied to the Unified Target config in {\texttt{ https\+://github.\+com/betaflight/unified-\/targets/tree/master/configs/default}}. If no Unified Target configuration for the target exists, a new Unified Target configuration will have to be created and submitted. If there is no Unified Target for the MCU type of the new target (see instructions above), then an update to the \textquotesingle{}legacy\textquotesingle{} format target definition in {\ttfamily src/main/target/} has to be submitted alongside the update to the Unified Target configuration.
+\end{DoxyEnumerate}\doxysubsection{Features}\label{md__c_1_2_hier_2_m_a___drohne_2_drohne___project_2betaflight_2_r_e_a_d_m_e_autotoc_md17}
+Betaflight has the following features\+:
+
+
+\begin{DoxyItemize}
+\item Multi-\/color RGB LED strip support (each LED can be a different color using variable length WS2811 Addressable RGB strips -\/ use for Orientation Indicators, Low Battery Warning, Flight Mode Status, Initialization Troubleshooting, etc)
+\item DShot (150, 300 and 600), Multishot, Oneshot (125 and 42) and Proshot1000 motor protocol support
+\item Blackbox flight recorder logging (to onboard flash or external micro\+SD card where equipped)
+\item Support for targets that use the STM32 F4, G4, F7 and H7 processors
+\item PWM, PPM, SPI, and Serial (SBus, SumH, SumD, Spektrum 1024/2048, XBus, etc) RX connection with failsafe detection
+\item Multiple telemetry protocols (CRSF, Fr\+Sky, Ho\+TT smart-\/port, MSP, etc)
+\item RSSI via ADC -\/ Uses ADC to read PWM RSSI signals, tested with Fr\+Sky D4\+R-\/\+II, X8R, X4\+R-\/\+SB, \& XSR
+\item OSD support \& configuration without needing third-\/party OSD software/firmware/comm devices
+\item OLED Displays -\/ Display information on\+: Battery voltage/current/m\+Ah, profile, rate profile, mode, version, sensors, etc
+\item In-\/flight manual PID tuning and rate adjustment
+\item PID and filter tuning using sliders
+\item Rate profiles and in-\/flight selection of them
+\item Configurable serial ports for Serial RX, Telemetry, ESC telemetry, MSP, GPS, OSD, Sonar, etc -\/ Use most devices on any port, softserial included
+\item VTX support for Unify Pro and IRC Tramp
+\item and MUCH, MUCH more.
+\end{DoxyItemize}\doxysubsection{Installation \& Documentation}\label{md__c_1_2_hier_2_m_a___drohne_2_drohne___project_2betaflight_2_r_e_a_d_m_e_autotoc_md18}
+See\+: {\texttt{ https\+://betaflight.\+com/docs/wiki}}\doxysubsection{Support and Developers Channel}\label{md__c_1_2_hier_2_m_a___drohne_2_drohne___project_2betaflight_2_r_e_a_d_m_e_autotoc_md19}
+There\textquotesingle{}s a dedicated Discord server here\+:
+
+{\texttt{ https\+://discord.\+gg/n4\+E6ak4u3c}}
+
+We also have a Facebook Group. Join us to get a place to talk about Betaflight, ask configuration questions, or just hang out with fellow pilots.
+
+{\texttt{ https\+://www.\+facebook.\+com/groups/betaflightgroup/}}
+
+Etiquette\+: Don\textquotesingle{}t ask to ask and please wait around long enough for a reply -\/ sometimes people are out flying, asleep or at work and can\textquotesingle{}t answer immediately.\doxysubsection{Configuration Tool}\label{md__c_1_2_hier_2_m_a___drohne_2_drohne___project_2betaflight_2_r_e_a_d_m_e_autotoc_md20}
+To configure Betaflight you should use the Betaflight-\/configurator GUI tool (Windows/\+OSX/\+Linux) which can be found here\+:
+
+{\texttt{ https\+://github.\+com/betaflight/betaflight-\/configurator/releases/latest}}\doxysubsection{Contributing}\label{md__c_1_2_hier_2_m_a___drohne_2_drohne___project_2betaflight_2_r_e_a_d_m_e_autotoc_md21}
+Contributions are welcome and encouraged. You can contribute in many ways\+:
+
+
+\begin{DoxyItemize}
+\item implement a new feature in the firmware or in configurator (see below);
+\item documentation updates and corrections;
+\item How-\/\+To guides -\/ received help? Help others!
+\item bug reporting \& fixes;
+\item new feature ideas \& suggestions;
+\item provide a new translation for configurator, or help us maintain the existing ones (see below).
+\end{DoxyItemize}
+
+The best place to start is the Betaflight Discord (registration {\texttt{ here}}). Next place is the github issue tracker\+:
+
+{\texttt{ https\+://github.\+com/betaflight/betaflight/issues}} {\texttt{ https\+://github.\+com/betaflight/betaflight-\/configurator/issues}}
+
+Before creating new issues please check to see if there is an existing one, search first otherwise you waste people\textquotesingle{}s time when they could be coding instead!
+
+If you want to contribute to our efforts financially, please consider making a donation to us through {\texttt{ Pay\+Pal}}.
+
+If you want to contribute financially on an ongoing basis, you should consider becoming a patron for us on {\texttt{ Patreon}}.\doxysubsection{Developers}\label{md__c_1_2_hier_2_m_a___drohne_2_drohne___project_2betaflight_2_r_e_a_d_m_e_autotoc_md22}
+Contribution of bugfixes and new features is encouraged. Please be aware that we have a thorough review process for pull requests, and be prepared to explain what you want to achieve with your pull request. Before starting to write code, please read our {\texttt{ development guidelines}} and {\texttt{ coding style definition}}.
+
+Git\+Hub actions are used to run automatic builds\doxysubsection{Translators}\label{md__c_1_2_hier_2_m_a___drohne_2_drohne___project_2betaflight_2_r_e_a_d_m_e_autotoc_md23}
+We want to make Betaflight accessible for pilots who are not fluent in English, and for this reason we are currently maintaining translations into 21 languages for Betaflight Configurator\+: Català, Dansk, Deutsch, Español, Euskera, Français, Galego, Hrvatski, Bahasa Indonesia, Italiano, 日本語, 한국어, Latviešu, Português, Português Brasileiro, polski, Русский язык, Svenska, 简体中文, 繁體中文. We have got a team of volunteer translators who do this work, but additional translators are always welcome to share the workload, and we are keen to add additional languages. If you would like to help us with translations, you have got the following options\+:
+\begin{DoxyItemize}
+\item if you help by suggesting some updates or improvements to translations in a language you are familiar with, head to {\texttt{ crowdin}} and add your suggested translations there;
+\item if you would like to start working on the translation for a new language, or take on responsibility for proof-\/reading the translation for a language you are very familiar with, please head to the Betaflight Discord chat (registration {\texttt{ here}}), and join the {\texttt{ \textquotesingle{}translation\textquotesingle{}}} channel -\/ the people in there can help you to get a new language added, or set you up as a proof reader.
+\end{DoxyItemize}\doxysubsection{Hardware Issues}\label{md__c_1_2_hier_2_m_a___drohne_2_drohne___project_2betaflight_2_r_e_a_d_m_e_autotoc_md24}
+Betaflight does not manufacture or distribute their own hardware. While we are collaborating with and supported by a number of manufacturers, we do not do any kind of hardware support. If you encounter any hardware issues with your flight controller or another component, please contact the manufacturer or supplier of your hardware, or check RCGroups {\texttt{ https\+://rcgroups.\+com/forums/showthread.\+php?t=2464844}} to see if others with the same problem have found a solution.\doxysubsection{Betaflight Releases}\label{md__c_1_2_hier_2_m_a___drohne_2_drohne___project_2betaflight_2_r_e_a_d_m_e_autotoc_md25}
+{\texttt{ https\+://github.\+com/betaflight/betaflight/releases}}\doxysubsection{Open Source / Contributors}\label{md__c_1_2_hier_2_m_a___drohne_2_drohne___project_2betaflight_2_r_e_a_d_m_e_autotoc_md26}
+Betaflight is software that is {\bfseries{open source}} and is available free of charge without warranty to all users.
+
+Betaflight is forked from Cleanflight, so thanks goes to all those who have contributed to Cleanflight and its origins.
+
+Origins for this fork (Thanks!)\+:
+\begin{DoxyItemize}
+\item {\bfseries{Alexinparis}} (for Multi\+Wii),
+\item {\bfseries{timecop}} (for Baseflight),
+\item {\bfseries{Dominic Clifton}} (for Cleanflight),
+\item {\bfseries{borisbstyle}} (for Betaflight), and
+\item {\bfseries{Sambas}} (for the original STM32\+F4 port).
+\end{DoxyItemize}
+
+The Betaflight Configurator is forked from Cleanflight Configurator and its origins.
+
+Origins for Betaflight Configurator\+:
+\begin{DoxyItemize}
+\item {\bfseries{Dominic Clifton}} (for Cleanflight configurator), and
+\item {\bfseries{ctn}} (for the original Configurator).
+\end{DoxyItemize}
+
+Big thanks to current and past contributors\+:
+\begin{DoxyItemize}
+\item Budden, Martin (martinbudden)
+\item Bardwell, Joshua (joshuabardwell)
+\item Blackman, Jason (blckmn)
+\item ctzsnooze
+\item Höglund, Anders (andershoglund)
+\item Ledvina, Petr (ledvinap) -\/ {\bfseries{IO code awesomeness!}}
+\item kc10kevin
+\item Keeble, Gary (MadmanK)
+\item Keller, Michael (mikeller) -\/ {\bfseries{Configurator brilliance}}
+\item Kravcov, Albert (skaman82) -\/ {\bfseries{Configurator brilliance}}
+\item MJ666
+\item Nathan (nathantsoi)
+\item ravnav
+\item sambas -\/ {\bfseries{bringing us the F4}}
+\item savaga
+\item Stålheim, Anton (Kite\+Anton)
+\end{DoxyItemize}
+
+And many many others who haven\textquotesingle{}t been mentioned.... 

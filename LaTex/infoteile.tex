@@ -1,0 +1,30 @@
+\renewcommand{\arraystretch}{1.3} % Optional: Erhöht den Zeilenabstand in der Tabelle
+
+\begin{longtable}{|l|p{4cm}|p{4cm}|p{4cm}|}
+	\caption{Übersicht der technischen Komponenten der Drohne} \label{tab:DrohnenKomponenten} \\ \hline
+	\textbf{Komponente}       & \textbf{Details}                                                                                                   & \textbf{Funktion}                                                                                                           & \textbf{Besondere Merkmale}                                                                                     \\ \hline
+	\endfirsthead % Kopfzeile für die erste Seite
+	
+	\hline
+	\textbf{Komponente}       & \textbf{Details}                                                                                                   & \textbf{Funktion}                                                                                                           & \textbf{Besondere Merkmale}                                                                                     \\ \hline
+	\endhead % Kopfzeile für die folgenden Seiten
+	
+	\hline
+	\endfoot % Fußzeile für alle Seiten außer der letzten
+	
+	\hline
+	\endlastfoot % Fußzeile für die letzte Seite
+	
+	\textbf{Akkumulator}      & OVONIC 6-Zellen LiPo, 22,2 V, 222 g                                                                               & Stabile Spannungsversorgung der Drohne                                                                                     & Hohe Leistungsfähigkeit, geeignet für Racing-Drohnen                                                           \\ \hline
+	\textbf{Motoren}          & Bürstenlose Motoren, 30 g                                                                                         & Antrieb der Drohne, ermöglicht Bewegung und Rotation                                                                       & Kompatibel mit 5-Zoll-Propellern, hohe Effizienz und Lebensdauer                                               \\ \hline
+	\textbf{Propeller}        & Aerodynamisch optimierte 5-Zoll-Propeller                                                                          & Erzeugt Schub für Flug und Stabilisierung                                                                                 & Effiziente Luftströmung, gegenläufige Rotation zur Stabilisierung                                               \\ \hline
+	\textbf{Flight Controller} & Speedy Bee F7 V3 Stack                                                                                           & Herzstück der Drohne, Steuerung von Sensordaten und Motoren                                                                & Integrierte IMU, Barometer, Blackbox zur Flugdatenaufzeichnung                                                  \\ \hline
+	\textbf{ELRS-Empfänger}   & 2.4 GHz                                                                                                           & Empfang von Steuerbefehlen                                                                                                & Stabilität bei langen Reichweiten                                                                              \\ \hline
+	\textbf{Fernbedienung}    & RadioMaster Boxer                                                                                                 & Steuerung der Drohne                                                                                                      & 16 Kanäle, ExpressLRS, Open-Source EdgeTX, kompatibel mit LiPo und Lithium-Ionen-Zellen                         \\ \hline
+	\textbf{Smoke Stopper}    & XT30/XT60 Plug                                                                                                    & Schutz vor Kurzschlüssen                                                                                                  & Automatischer Stromkreisunterbrecher bei Fehlern                                                                \\ \hline
+	\textbf{Kondensator}      & Im Lieferumfang des Flight Controllers enthalten                                                                  & Glättung von Spannungsschwankungen, Schutz vor Spannungsspitzen                                                           & Verbessert Stabilität und Leistung                                                                             \\ \hline
+	\textbf{Frame}            & Kohlefaser-Frame im Deadcat-Design                                                                                & Struktur der Drohne, Montage der Komponenten                                                                              & Robust und leicht, optimiertes Sichtfeld ohne Propeller im Kamerabild                                          \\ \hline
+	\textbf{IMU}              & Beschleunigungssensor und Gyroskop                                                                                & Misst Beschleunigung und Winkelgeschwindigkeit, stabilisiert die Drohne                                                   & Präzise Orientierung und Kurskorrektur, Kalman-Filter zur Datenverarbeitung                     \\ \hline
+	\textbf{Barometer}        & Luftdruckmesser                                                                                                  & Misst Höhe für Altitude-Hold-Modus und Fail-Safe                                                                         & Ergänzt durch GPS (im aktuellen Modell kein GPS integriert)                                         \\ \hline
+	
+\end{longtable}
