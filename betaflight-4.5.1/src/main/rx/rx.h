@@ -41,6 +41,14 @@
 #define CHANNEL_VALUE_TO_RXFAIL_STEP(channelValue) ((constrain(channelValue, PWM_PULSE_MIN, PWM_PULSE_MAX) - PWM_PULSE_MIN) / 25)
 #define MAX_RXFAIL_RANGE_STEP ((PWM_PULSE_MAX - PWM_PULSE_MIN) / 25)
 
+// special added---------------------------------------------------
+#define MIN_THROTTLE 1000
+#define MAX_THROTTLE 1400
+#define DEFAULT_THROTTLE 1200
+#define UPDATE_INTERVAL_MS 100
+#define THROTTLE_STEP 5        // Wie viel der Throttle pro Schritt geändert wird
+#define MAX_ADJUSTMENT 10
+//------------------------------------------------------------------
 
 typedef enum {
     RX_FRAME_PENDING = 0,

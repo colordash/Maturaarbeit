@@ -242,7 +242,8 @@ RX_SRC = \
             drivers/rx/rx_a7105.c \
             drivers/rx/rx_cyrf6936.c \
             drivers/rx/rx_sx127x.c \
-            drivers/rx/rx_sx1280.c
+            drivers/rx/rx_sx1280.c\
+            rx/kalman_filter.c
 
 FLASH_SRC += \
             drivers/flash.c \

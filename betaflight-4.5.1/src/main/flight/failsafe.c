@@ -75,15 +75,17 @@ PG_REGISTER_WITH_RESET_TEMPLATE(failsafeConfig_t, failsafeConfig, PG_FAILSAFE_CO
 #define DEFAULT_FAILSAFE_RECOVERY_DELAY 5            // 500ms of valid rx data needed to allow recovery from failsafe and arming block
 //#endif
 // Definition von Standardwerten für die Failsafe-Konfiguration
-PG\_RESET\_TEMPLATE(failsafeConfig\_t, failsafeConfig,
-.failsafe\_throttle = 1200,                                     // Hier wird die abstiegsgeschwindigkeit definiert
-.failsafe\_throttle\_low\_delay = 100,                          //Standardmässige Verzögerung für niedrigen Throttle beim Failsafe-Zustand, um nur zu disarmen
-.failsafe\_delay = 0,                                           // 0 Sek. in Phase 1, 
-.failsafe\_off\_delay = 100,                                     // 10 Sekunden in der Landephase, falls aktiviert.
-.failsafe\_switch\_mode = FAILSAFE\_SWITCH\_MODE\_STAGE1,       // Die Standard-Failsafe-Schalteraktion ist identisch mit dem Verlust der RC-Verbindung.
-.failsafe\_procedure = FAILSAFE\_PROCEDURE\_DROP\_IT,           // Die Standard-Failsafe-Prozedur ist 0: Automatische Landung.
-.failsafe\_recovery\_delay = DEFAULT\_FAILSAFE\_RECOVERY\_DELAY,
-.failsafe\_stick\_threshold = 30                                // 30 Prozent der Stick-Ausschläge, um das GPS Rescue-Verfahren zu beenden.
+PG_RESET_TEMPLATE(failsafeConfig_t, failsafeConfig,
+    // Hier wird die abstiegsgeschwindigkeit definiert
+    .failsafe_throttle = 1200,                           // default throttle off. am anfang waren es 1000
+    //.target_altitude = 500,    eher kritisch so                           // Zielhöhe in cm (beispielsweise 5 Meter)
+    .failsafe_throttle_low_delay = 100,                  // default throttle low delay for "just disarm" on failsafe condition
+    .failsafe_delay = 0,                                // 1.5 sec stage 1 period, can regain control on signal recovery, at idle in drop mode
+    .failsafe_off_delay = 100,                            // 1 sec in landing phase, if enabled
+    .failsafe_switch_mode = FAILSAFE_SWITCH_MODE_STAGE1, // default failsafe switch action is identical to rc link loss
+    .failsafe_procedure = FAILSAFE_PROCEDURE_DROP_IT,    // default full failsafe procedure is 0: auto-landing
+    .failsafe_recovery_delay = DEFAULT_FAILSAFE_RECOVERY_DELAY,
+    .failsafe_stick_threshold = 30                       // 30 percent of stick deflection to exit GPS Rescue procedure
 );
 
 /*

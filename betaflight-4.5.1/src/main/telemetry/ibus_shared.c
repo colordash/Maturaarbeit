@@ -272,12 +272,12 @@ static uint16_t getMode(void)
     return flightMode;
 }
 
-#if defined(USE_ACC)
-static int16_t getACC(uint8_t index)
+
+int16_t getACC(uint8_t index)
 {
     return (int16_t)((acc.accADC[index] * acc.dev.acc_1G_rec) * 1000);
 }
-#endif
+
 
 #if defined(USE_TELEMETRY_IBUS_EXTENDED)
 static void setCombinedFrame(uint8_t* bufferPtr, const uint8_t* structure, uint8_t itemCount)

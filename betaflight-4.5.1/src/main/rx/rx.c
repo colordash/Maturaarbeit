@@ -95,6 +95,9 @@
 
 #include "sensors/sensors.h"
 #include "sensors/barometer.h"
+#include "telemetry/ibus_shared.h"
+
+#include "kalman_filter.h"
 
 
 
@@ -708,56 +711,99 @@ static void readRxChannelsApplyRanges(void)
     }
 }
 
-static bool isFailsafeActivated = false;
-static uint16_t lastCallTime = 0;
-static float baroAltitudeStart = 0;  // Starthöhe beim Failsafe-Eintritt in cm !!!
-static uint16_t throttle = 1200;     // Startwert für Throttle
 
-// Konfiguration
-#define MIN_THROTTLE 1000
-#define MAX_THROTTLE 1400
-#define DEFAULT_THROTTLE 1200
-#define UPDATE_INTERVAL_MS 10
-#define THROTTLE_STEP 5        // Wie viel der Throttle pro Schritt geändert wird
+// Code Ergänzung ------------------------------------------
+
+static bool isFailsafeActivated = false;  
+static uint32_t lastCallTime = 0;
+static int16_t throttle = 1200;     // Startwert für Throttle
+const float targetDescentRate = -10; // -100 cm pro sekunden soll erreicht werden, spricht 1 m/s
+static float AltitudeStart = 0;  // Starthöhe beim Failsafe-Eintritt in cm !!!
+static float altitude_change = 0;
+
+
+// PID Parameter
+float previous_error = 0;
+float integral = 0;
+int last_altitude = 0;
+// PID-Koeffizienten
+#define KP 0.3  // Proportionaler Anteil
+#define KI 0.5  // Integraler Anteil
+#define KD 0.05  // Differenzialer Anteil
+#define MAX_INTEGRAL 1
+
+
+// Tiefpassfilter-Funktion
+float lowpassFilter(float new_measurement, float previous_filtered_value, float alpha) {
+    return alpha * new_measurement + (1.0f - alpha) * previous_filtered_value;
+}
+
+int calculatePID(float error, float dt) {
+    const float alpha = 0.65; 
+    static float smoothed_derivative = 0; // Wird nur einmal initialisiert
+    
+    // Integriere den Fehler über die Zeit
+    integral += error * dt;
+    integral = constrain(integral, -MAX_INTEGRAL, MAX_INTEGRAL);
+
+    
+    // Berechne den Differenzialterm (ungefiltert)
+    float raw_derivative = (error - previous_error) / dt;
+
+    // Tiefpassfilter anwenden
+    smoothed_derivative = lowpassFilter(raw_derivative, smoothed_derivative, alpha);
+    previous_error = error;
+    
+    // PID-Ausgabe berechnen
+    float throttle_adjustment = (KP * error + KI * integral + KD * smoothed_derivative);
+    throttle_adjustment = constrain(throttle_adjustment, -MAX_ADJUSTMENT, MAX_ADJUSTMENT);
+    return (int)throttle_adjustment;
+}
 
 // Berechnet den Failsafe Throttle
 uint16_t getFailsafeThrottle(uint32_t currentTime) {
     // Erste Aktivierung des Failsafe
     if (!isFailsafeActivated) {
+        AltitudeStart = getBaroAltitude();
         isFailsafeActivated = true;
         lastCallTime = currentTime;
-        baroAltitudeStart = getBaroAltitude();
         throttle = DEFAULT_THROTTLE;
         return throttle;
     }
 
-    // Nur alle 100ms aktualisieren
+    // Nur alle 10ms aktualisieren
     if (currentTime - lastCallTime < UPDATE_INTERVAL_MS) {
         return throttle;
     }
 
+    float dt = (currentTime - lastCallTime) / 1000.0f; 
     // Höhenänderung berechnen
-    float currentAltitude = getBaroAltitude();
-    float altitude_change = currentAltitude - baroAltitudeStart;
-
-    // Throttle anpassen basierend auf Höhenänderung
-    if (altitude_change > 0) {         // Steigt
-        throttle -= THROTTLE_STEP;
-    } else if (altitude_change < -2) { // Sinkt zu schnell
-        throttle += THROTTLE_STEP;
-    }
-    // Sonst: Sinkrate ok, Throttle beibehalten
+    float currentAltitude = lowpassFilter(getBaroAltitude(), AltitudeStart, 0.7);
+    altitude_change = currentAltitude - AltitudeStart;
+   
+    // Berechne den Fehler (Sollwert - Istwert)
+    float error = (targetDescentRate - altitude_change);
+    throttle += calculatePID(error, dt);
 
     // Throttle begrenzen
-    if (throttle < MIN_THROTTLE) throttle = MIN_THROTTLE;
-    if (throttle > MAX_THROTTLE) throttle = MAX_THROTTLE;
+    throttle = constrain(throttle, MIN_THROTTLE, MAX_THROTTLE);
 
     // Zeit und Höhe für nächsten Vergleich speichern
+    AltitudeStart = currentAltitude; 
     lastCallTime = currentTime;
-    baroAltitudeStart = currentAltitude;
 
     return throttle;
 }
+
+
+
+
+
+
+
+
+
+
 
 void detectAndApplySignalLossBehaviour(void)
 {

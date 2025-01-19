@@ -31,7 +31,7 @@ RAM_BASED ?= no
 
 # reserve space for custom defaults
 CUSTOM_DEFAULTS_EXTENDED ?= no
-
+LDFLAGS = -T linker_script.ld  # Beispiel für ein Linkerskript
 # Debugger optons:
 #   empty - ordinary build with all optimizations enabled
 #   INFO - ordinary build with debug symbols and all optimizations enabled
@@ -57,6 +57,9 @@ FORKNAME      = betaflight
 # Working directories
 ROOT            := $(patsubst %/,%,$(dir $(lastword $(MAKEFILE_LIST))))
 SRC_DIR         := $(ROOT)/src/main
+
+
+
 OBJECT_DIR      := $(ROOT)/obj/main
 BIN_DIR         := $(ROOT)/obj
 CMSIS_DIR       := $(ROOT)/lib/main/CMSIS
